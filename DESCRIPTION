@@ -1,0 +1,12 @@
+Package: netpanel
+Type: Package
+Title: Estimation Routines for Panel Network Autocorrelation Models
+Version: 0.0.1
+Date: 2026-04-16
+Authors@R: person("Kevin", "Carson", role = c("aut",
+     "cre"), email = "kacarson@arizona.edu")
+Description: This package contains estimation routines for panel network autocorrelation models fit by maximum likelihood estimation. 
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.1.0)
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 7.3.3
