@@ -25,20 +25,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // netfilter
-arma::mat netfilter(arma::mat W, double rho);
+arma::mat netfilter(Rcpp::List W, arma::vec rho);
 RcppExport SEXP _netpanel_netfilter(SEXP WSEXP, SEXP rhoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type rho(rhoSEXP);
     rcpp_result_gen = Rcpp::wrap(netfilter(W, rho));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_v
-arma::vec compute_v(arma::mat A, arma::vec beta, arma::mat X, arma::vec Y);
-RcppExport SEXP _netpanel_compute_v(SEXP ASEXP, SEXP betaSEXP, SEXP XSEXP, SEXP YSEXP) {
+// gls_compute_v
+arma::vec gls_compute_v(arma::mat A, arma::vec beta, arma::mat X, arma::vec Y);
+RcppExport SEXP _netpanel_gls_compute_v(SEXP ASEXP, SEXP betaSEXP, SEXP XSEXP, SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,13 +46,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_v(A, beta, X, Y));
+    rcpp_result_gen = Rcpp::wrap(gls_compute_v(A, beta, X, Y));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_beta
-arma::vec compute_beta(arma::mat A, arma::mat omegainv, arma::mat X, arma::vec Y);
-RcppExport SEXP _netpanel_compute_beta(SEXP ASEXP, SEXP omegainvSEXP, SEXP XSEXP, SEXP YSEXP) {
+// gls_compute_beta
+arma::vec gls_compute_beta(arma::mat A, arma::mat omegainv, arma::mat X, arma::vec Y, bool random);
+RcppExport SEXP _netpanel_gls_compute_beta(SEXP ASEXP, SEXP omegainvSEXP, SEXP XSEXP, SEXP YSEXP, SEXP randomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,42 +60,44 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type omegainv(omegainvSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_beta(A, omegainv, X, Y));
+    Rcpp::traits::input_parameter< bool >::type random(randomSEXP);
+    rcpp_result_gen = Rcpp::wrap(gls_compute_beta(A, omegainv, X, Y, random));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_sigma2
-double compute_sigma2(arma::vec v, arma::mat omegainv);
-RcppExport SEXP _netpanel_compute_sigma2(SEXP vSEXP, SEXP omegainvSEXP) {
+// gls_compute_sigma2
+double gls_compute_sigma2(arma::vec v, arma::mat omegainv, bool random);
+RcppExport SEXP _netpanel_gls_compute_sigma2(SEXP vSEXP, SEXP omegainvSEXP, SEXP randomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type omegainv(omegainvSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_sigma2(v, omegainv));
+    Rcpp::traits::input_parameter< bool >::type random(randomSEXP);
+    rcpp_result_gen = Rcpp::wrap(gls_compute_sigma2(v, omegainv, random));
     return rcpp_result_gen;
 END_RCPP
 }
-// pnam_ll_rule_search
-double pnam_ll_rule_search(arma::vec Y, arma::mat X, arma::mat W, double n, double t, double rho, double theta);
-RcppExport SEXP _netpanel_pnam_ll_rule_search(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP thetaSEXP) {
+// pnam_ll_random_find
+double pnam_ll_random_find(arma::vec Y, arma::mat X, Rcpp::List W, double n, double t, arma::vec rho, double theta);
+RcppExport SEXP _netpanel_pnam_ll_random_find(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type W(WSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type rho(rhoSEXP);
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_rule_search(Y, X, W, n, t, rho, theta));
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_random_find(Y, X, W, n, t, rho, theta));
     return rcpp_result_gen;
 END_RCPP
 }
-// pnam_ll_rule
-double pnam_ll_rule(arma::mat netA, double sigma2, arma::vec v, arma::mat omega, double n, double t);
-RcppExport SEXP _netpanel_pnam_ll_rule(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP omegaSEXP, SEXP nSEXP, SEXP tSEXP) {
+// pnam_ll_random
+double pnam_ll_random(arma::mat netA, double sigma2, arma::vec v, arma::mat omega, double n, double t);
+RcppExport SEXP _netpanel_pnam_ll_random(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP omegaSEXP, SEXP nSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -105,121 +107,29 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type omega(omegaSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_rule(netA, sigma2, v, omega, n, t));
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_random(netA, sigma2, v, omega, n, t));
     return rcpp_result_gen;
 END_RCPP
 }
-// omega_rulewae
-arma::mat omega_rulewae(double theta, double n, double t, arma::mat W1, double lambda);
-RcppExport SEXP _netpanel_omega_rulewae(SEXP thetaSEXP, SEXP nSEXP, SEXP tSEXP, SEXP W1SEXP, SEXP lambdaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type W1(W1SEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(omega_rulewae(theta, n, t, W1, lambda));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pnam_ll_rulewae_search
-double pnam_ll_rulewae_search(arma::vec Y, arma::mat X, arma::mat W, arma::mat W1, double n, double t, double rho, double theta, double lambda);
-RcppExport SEXP _netpanel_pnam_ll_rulewae_search(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP W1SEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP thetaSEXP, SEXP lambdaSEXP) {
+// pnam_ll_fixed_find
+double pnam_ll_fixed_find(arma::vec Y, arma::mat X, Rcpp::List W, double n, double t, arma::vec rho);
+RcppExport SEXP _netpanel_pnam_ll_fixed_find(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type W1(W1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type W(WSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_rulewae_search(Y, X, W, W1, n, t, rho, theta, lambda));
+    Rcpp::traits::input_parameter< arma::vec >::type rho(rhoSEXP);
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_fixed_find(Y, X, W, n, t, rho));
     return rcpp_result_gen;
 END_RCPP
 }
-// pnam_ll_rulewae
-double pnam_ll_rulewae(arma::mat netA, double sigma2, arma::vec v, arma::mat omega, double n, double t);
-RcppExport SEXP _netpanel_pnam_ll_rulewae(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP omegaSEXP, SEXP nSEXP, SEXP tSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type netA(netASEXP);
-    Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< double >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_rulewae(netA, sigma2, v, omega, n, t));
-    return rcpp_result_gen;
-END_RCPP
-}
-// netfilter_dpnam
-arma::mat netfilter_dpnam(arma::mat W, arma::mat L, double rho, double delta, double phi);
-RcppExport SEXP _netpanel_netfilter_dpnam(SEXP WSEXP, SEXP LSEXP, SEXP rhoSEXP, SEXP deltaSEXP, SEXP phiSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type L(LSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< double >::type phi(phiSEXP);
-    rcpp_result_gen = Rcpp::wrap(netfilter_dpnam(W, L, rho, delta, phi));
-    return rcpp_result_gen;
-END_RCPP
-}
-// compute_beta_norandom
-arma::vec compute_beta_norandom(arma::mat X, arma::mat Y, arma::mat A);
-RcppExport SEXP _netpanel_compute_beta_norandom(SEXP XSEXP, SEXP YSEXP, SEXP ASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_beta_norandom(X, Y, A));
-    return rcpp_result_gen;
-END_RCPP
-}
-// compute_sigma2_norandom
-double compute_sigma2_norandom(arma::vec v);
-RcppExport SEXP _netpanel_compute_sigma2_norandom(SEXP vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_sigma2_norandom(v));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pnam_ll_dynam_search
-double pnam_ll_dynam_search(arma::vec Y, arma::mat X, arma::mat W, arma::mat L, double n, double t, double rho, double delta, double phi);
-RcppExport SEXP _netpanel_pnam_ll_dynam_search(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP LSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP deltaSEXP, SEXP phiSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type L(LSEXP);
-    Rcpp::traits::input_parameter< double >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< double >::type phi(phiSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_dynam_search(Y, X, W, L, n, t, rho, delta, phi));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pnam_ll_dynam
-double pnam_ll_dynam(arma::mat netA, double sigma2, arma::vec v, double n, double t);
-RcppExport SEXP _netpanel_pnam_ll_dynam(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP nSEXP, SEXP tSEXP) {
+// pnam_ll_fixed
+double pnam_ll_fixed(arma::mat netA, double sigma2, arma::vec v, double n, double t);
+RcppExport SEXP _netpanel_pnam_ll_fixed(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP nSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -228,82 +138,155 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_dynam(netA, sigma2, v, n, t));
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_fixed(netA, sigma2, v, n, t));
     return rcpp_result_gen;
 END_RCPP
 }
-// B_dpnam
-arma::mat B_dpnam(arma::mat B, double lambda);
-RcppExport SEXP _netpanel_B_dpnam(SEXP BSEXP, SEXP lambdaSEXP) {
+// create_B
+arma::mat create_B(arma::mat W2, double lambda);
+RcppExport SEXP _netpanel_create_B(SEXP W2SEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type W2(W2SEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_B(W2, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// create_LAMBDA
+arma::mat create_LAMBDA(arma::mat B);
+RcppExport SEXP _netpanel_create_LAMBDA(SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type B(BSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(B_dpnam(B, lambda));
+    rcpp_result_gen = Rcpp::wrap(create_LAMBDA(B));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_beta_norandom_wae
-arma::vec compute_beta_norandom_wae(arma::mat X, arma::mat Y, arma::mat A, arma::mat Lambda);
-RcppExport SEXP _netpanel_compute_beta_norandom_wae(SEXP XSEXP, SEXP YSEXP, SEXP ASEXP, SEXP LambdaSEXP) {
+// gls_compute_e
+arma::vec gls_compute_e(arma::mat A, arma::vec beta, arma::mat B, arma::mat X, arma::vec Y);
+RcppExport SEXP _netpanel_gls_compute_e(SEXP ASEXP, SEXP betaSEXP, SEXP BSEXP, SEXP XSEXP, SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Lambda(LambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_beta_norandom_wae(X, Y, A, Lambda));
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type B(BSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(gls_compute_e(A, beta, B, X, Y));
     return rcpp_result_gen;
 END_RCPP
 }
-// compute_sigma2_norandom_wae
-double compute_sigma2_norandom_wae(arma::vec v, arma::mat Lambda);
-RcppExport SEXP _netpanel_compute_sigma2_norandom_wae(SEXP vSEXP, SEXP LambdaSEXP) {
+// gls_compute_beta_error
+arma::vec gls_compute_beta_error(arma::mat A, arma::mat LAMBDA, arma::mat X, arma::vec Y);
+RcppExport SEXP _netpanel_gls_compute_beta_error(SEXP ASEXP, SEXP LAMBDASEXP, SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type LAMBDA(LAMBDASEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(gls_compute_beta_error(A, LAMBDA, X, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gls_compute_sigma2_error
+double gls_compute_sigma2_error(arma::vec v, arma::mat omegainv);
+RcppExport SEXP _netpanel_gls_compute_sigma2_error(SEXP vSEXP, SEXP omegainvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Lambda(LambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_sigma2_norandom_wae(v, Lambda));
+    Rcpp::traits::input_parameter< arma::mat >::type omegainv(omegainvSEXP);
+    rcpp_result_gen = Rcpp::wrap(gls_compute_sigma2_error(v, omegainv));
     return rcpp_result_gen;
 END_RCPP
 }
-// pnam_ll_dynam_wae_search
-double pnam_ll_dynam_wae_search(arma::vec Y, arma::mat X, arma::mat W, arma::mat L, arma::mat B, double n, double t, double rho, double delta, double phi, double lambda);
-RcppExport SEXP _netpanel_pnam_ll_dynam_wae_search(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP LSEXP, SEXP BSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP deltaSEXP, SEXP phiSEXP, SEXP lambdaSEXP) {
+// pnam_ll_fixed_error_find
+double pnam_ll_fixed_error_find(arma::vec Y, arma::mat X, Rcpp::List W, double n, double t, arma::vec rho, arma::mat W2, double lambda);
+RcppExport SEXP _netpanel_pnam_ll_fixed_error_find(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP W2SEXP, SEXP lambdaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type L(LSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type W(WSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
-    Rcpp::traits::input_parameter< double >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type W2(W2SEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_dynam_wae_search(Y, X, W, L, B, n, t, rho, delta, phi, lambda));
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_fixed_error_find(Y, X, W, n, t, rho, W2, lambda));
     return rcpp_result_gen;
 END_RCPP
 }
-// pnam_ll_dynam_wae
-double pnam_ll_dynam_wae(arma::mat netA, arma::mat netB, double sigma2, arma::vec e, double n, double t);
-RcppExport SEXP _netpanel_pnam_ll_dynam_wae(SEXP netASEXP, SEXP netBSEXP, SEXP sigma2SEXP, SEXP eSEXP, SEXP nSEXP, SEXP tSEXP) {
+// pnam_ll_fixed_error
+double pnam_ll_fixed_error(arma::mat netA, arma::mat B, double sigma2, arma::vec e, double n, double t);
+RcppExport SEXP _netpanel_pnam_ll_fixed_error(SEXP netASEXP, SEXP BSEXP, SEXP sigma2SEXP, SEXP eSEXP, SEXP nSEXP, SEXP tSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type netA(netASEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type netB(netBSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type B(BSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
     Rcpp::traits::input_parameter< arma::vec >::type e(eSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_dynam_wae(netA, netB, sigma2, e, n, t));
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_fixed_error(netA, B, sigma2, e, n, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// omega_error
+arma::mat omega_error(double theta, double n, double t, arma::mat W2, double lambda);
+RcppExport SEXP _netpanel_omega_error(SEXP thetaSEXP, SEXP nSEXP, SEXP tSEXP, SEXP W2SEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type W2(W2SEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(omega_error(theta, n, t, W2, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pnam_ll_random_error_find
+double pnam_ll_random_error_find(arma::vec Y, arma::mat X, Rcpp::List W, double n, double t, arma::vec rho, double theta, arma::mat W2, double lambda);
+RcppExport SEXP _netpanel_pnam_ll_random_error_find(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP thetaSEXP, SEXP W2SEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type W(WSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type W2(W2SEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_random_error_find(Y, X, W, n, t, rho, theta, W2, lambda));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pnam_ll_random_error
+double pnam_ll_random_error(arma::mat netA, double sigma2, arma::vec v, arma::mat omega, double n, double t);
+RcppExport SEXP _netpanel_pnam_ll_random_error(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP omegaSEXP, SEXP nSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type netA(netASEXP);
+    Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_random_error(netA, sigma2, v, omega, n, t));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -311,24 +294,23 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_netpanel_omega", (DL_FUNC) &_netpanel_omega, 3},
     {"_netpanel_netfilter", (DL_FUNC) &_netpanel_netfilter, 2},
-    {"_netpanel_compute_v", (DL_FUNC) &_netpanel_compute_v, 4},
-    {"_netpanel_compute_beta", (DL_FUNC) &_netpanel_compute_beta, 4},
-    {"_netpanel_compute_sigma2", (DL_FUNC) &_netpanel_compute_sigma2, 2},
-    {"_netpanel_pnam_ll_rule_search", (DL_FUNC) &_netpanel_pnam_ll_rule_search, 7},
-    {"_netpanel_pnam_ll_rule", (DL_FUNC) &_netpanel_pnam_ll_rule, 6},
-    {"_netpanel_omega_rulewae", (DL_FUNC) &_netpanel_omega_rulewae, 5},
-    {"_netpanel_pnam_ll_rulewae_search", (DL_FUNC) &_netpanel_pnam_ll_rulewae_search, 9},
-    {"_netpanel_pnam_ll_rulewae", (DL_FUNC) &_netpanel_pnam_ll_rulewae, 6},
-    {"_netpanel_netfilter_dpnam", (DL_FUNC) &_netpanel_netfilter_dpnam, 5},
-    {"_netpanel_compute_beta_norandom", (DL_FUNC) &_netpanel_compute_beta_norandom, 3},
-    {"_netpanel_compute_sigma2_norandom", (DL_FUNC) &_netpanel_compute_sigma2_norandom, 1},
-    {"_netpanel_pnam_ll_dynam_search", (DL_FUNC) &_netpanel_pnam_ll_dynam_search, 9},
-    {"_netpanel_pnam_ll_dynam", (DL_FUNC) &_netpanel_pnam_ll_dynam, 5},
-    {"_netpanel_B_dpnam", (DL_FUNC) &_netpanel_B_dpnam, 2},
-    {"_netpanel_compute_beta_norandom_wae", (DL_FUNC) &_netpanel_compute_beta_norandom_wae, 4},
-    {"_netpanel_compute_sigma2_norandom_wae", (DL_FUNC) &_netpanel_compute_sigma2_norandom_wae, 2},
-    {"_netpanel_pnam_ll_dynam_wae_search", (DL_FUNC) &_netpanel_pnam_ll_dynam_wae_search, 11},
-    {"_netpanel_pnam_ll_dynam_wae", (DL_FUNC) &_netpanel_pnam_ll_dynam_wae, 6},
+    {"_netpanel_gls_compute_v", (DL_FUNC) &_netpanel_gls_compute_v, 4},
+    {"_netpanel_gls_compute_beta", (DL_FUNC) &_netpanel_gls_compute_beta, 5},
+    {"_netpanel_gls_compute_sigma2", (DL_FUNC) &_netpanel_gls_compute_sigma2, 3},
+    {"_netpanel_pnam_ll_random_find", (DL_FUNC) &_netpanel_pnam_ll_random_find, 7},
+    {"_netpanel_pnam_ll_random", (DL_FUNC) &_netpanel_pnam_ll_random, 6},
+    {"_netpanel_pnam_ll_fixed_find", (DL_FUNC) &_netpanel_pnam_ll_fixed_find, 6},
+    {"_netpanel_pnam_ll_fixed", (DL_FUNC) &_netpanel_pnam_ll_fixed, 5},
+    {"_netpanel_create_B", (DL_FUNC) &_netpanel_create_B, 2},
+    {"_netpanel_create_LAMBDA", (DL_FUNC) &_netpanel_create_LAMBDA, 1},
+    {"_netpanel_gls_compute_e", (DL_FUNC) &_netpanel_gls_compute_e, 5},
+    {"_netpanel_gls_compute_beta_error", (DL_FUNC) &_netpanel_gls_compute_beta_error, 4},
+    {"_netpanel_gls_compute_sigma2_error", (DL_FUNC) &_netpanel_gls_compute_sigma2_error, 2},
+    {"_netpanel_pnam_ll_fixed_error_find", (DL_FUNC) &_netpanel_pnam_ll_fixed_error_find, 8},
+    {"_netpanel_pnam_ll_fixed_error", (DL_FUNC) &_netpanel_pnam_ll_fixed_error, 6},
+    {"_netpanel_omega_error", (DL_FUNC) &_netpanel_omega_error, 5},
+    {"_netpanel_pnam_ll_random_error_find", (DL_FUNC) &_netpanel_pnam_ll_random_error_find, 9},
+    {"_netpanel_pnam_ll_random_error", (DL_FUNC) &_netpanel_pnam_ll_random_error, 6},
     {NULL, NULL, 0}
 };
 

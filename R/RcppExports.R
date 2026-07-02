@@ -9,75 +9,71 @@ netfilter <- function(W, rho) {
     .Call(`_netpanel_netfilter`, W, rho)
 }
 
-compute_v <- function(A, beta, X, Y) {
-    .Call(`_netpanel_compute_v`, A, beta, X, Y)
+gls_compute_v <- function(A, beta, X, Y) {
+    .Call(`_netpanel_gls_compute_v`, A, beta, X, Y)
 }
 
-compute_beta <- function(A, omegainv, X, Y) {
-    .Call(`_netpanel_compute_beta`, A, omegainv, X, Y)
+gls_compute_beta <- function(A, omegainv, X, Y, random) {
+    .Call(`_netpanel_gls_compute_beta`, A, omegainv, X, Y, random)
 }
 
-compute_sigma2 <- function(v, omegainv) {
-    .Call(`_netpanel_compute_sigma2`, v, omegainv)
+gls_compute_sigma2 <- function(v, omegainv, random) {
+    .Call(`_netpanel_gls_compute_sigma2`, v, omegainv, random)
 }
 
-pnam_ll_rule_search <- function(Y, X, W, n, t, rho, theta) {
-    .Call(`_netpanel_pnam_ll_rule_search`, Y, X, W, n, t, rho, theta)
+pnam_ll_random_find <- function(Y, X, W, n, t, rho, theta) {
+    .Call(`_netpanel_pnam_ll_random_find`, Y, X, W, n, t, rho, theta)
 }
 
-pnam_ll_rule <- function(netA, sigma2, v, omega, n, t) {
-    .Call(`_netpanel_pnam_ll_rule`, netA, sigma2, v, omega, n, t)
+pnam_ll_random <- function(netA, sigma2, v, omega, n, t) {
+    .Call(`_netpanel_pnam_ll_random`, netA, sigma2, v, omega, n, t)
 }
 
-omega_rulewae <- function(theta, n, t, W1, lambda) {
-    .Call(`_netpanel_omega_rulewae`, theta, n, t, W1, lambda)
+pnam_ll_fixed_find <- function(Y, X, W, n, t, rho) {
+    .Call(`_netpanel_pnam_ll_fixed_find`, Y, X, W, n, t, rho)
 }
 
-pnam_ll_rulewae_search <- function(Y, X, W, W1, n, t, rho, theta, lambda) {
-    .Call(`_netpanel_pnam_ll_rulewae_search`, Y, X, W, W1, n, t, rho, theta, lambda)
+pnam_ll_fixed <- function(netA, sigma2, v, n, t) {
+    .Call(`_netpanel_pnam_ll_fixed`, netA, sigma2, v, n, t)
 }
 
-pnam_ll_rulewae <- function(netA, sigma2, v, omega, n, t) {
-    .Call(`_netpanel_pnam_ll_rulewae`, netA, sigma2, v, omega, n, t)
+create_B <- function(W2, lambda) {
+    .Call(`_netpanel_create_B`, W2, lambda)
 }
 
-netfilter_dpnam <- function(W, L, rho, delta, phi) {
-    .Call(`_netpanel_netfilter_dpnam`, W, L, rho, delta, phi)
+create_LAMBDA <- function(B) {
+    .Call(`_netpanel_create_LAMBDA`, B)
 }
 
-compute_beta_norandom <- function(X, Y, A) {
-    .Call(`_netpanel_compute_beta_norandom`, X, Y, A)
+gls_compute_e <- function(A, beta, B, X, Y) {
+    .Call(`_netpanel_gls_compute_e`, A, beta, B, X, Y)
 }
 
-compute_sigma2_norandom <- function(v) {
-    .Call(`_netpanel_compute_sigma2_norandom`, v)
+gls_compute_beta_error <- function(A, LAMBDA, X, Y) {
+    .Call(`_netpanel_gls_compute_beta_error`, A, LAMBDA, X, Y)
 }
 
-pnam_ll_dynam_search <- function(Y, X, W, L, n, t, rho, delta, phi) {
-    .Call(`_netpanel_pnam_ll_dynam_search`, Y, X, W, L, n, t, rho, delta, phi)
+gls_compute_sigma2_error <- function(v, omegainv) {
+    .Call(`_netpanel_gls_compute_sigma2_error`, v, omegainv)
 }
 
-pnam_ll_dynam <- function(netA, sigma2, v, n, t) {
-    .Call(`_netpanel_pnam_ll_dynam`, netA, sigma2, v, n, t)
+pnam_ll_fixed_error_find <- function(Y, X, W, n, t, rho, W2, lambda) {
+    .Call(`_netpanel_pnam_ll_fixed_error_find`, Y, X, W, n, t, rho, W2, lambda)
 }
 
-B_dpnam <- function(B, lambda) {
-    .Call(`_netpanel_B_dpnam`, B, lambda)
+pnam_ll_fixed_error <- function(netA, B, sigma2, e, n, t) {
+    .Call(`_netpanel_pnam_ll_fixed_error`, netA, B, sigma2, e, n, t)
 }
 
-compute_beta_norandom_wae <- function(X, Y, A, Lambda) {
-    .Call(`_netpanel_compute_beta_norandom_wae`, X, Y, A, Lambda)
+omega_error <- function(theta, n, t, W2, lambda) {
+    .Call(`_netpanel_omega_error`, theta, n, t, W2, lambda)
 }
 
-compute_sigma2_norandom_wae <- function(v, Lambda) {
-    .Call(`_netpanel_compute_sigma2_norandom_wae`, v, Lambda)
+pnam_ll_random_error_find <- function(Y, X, W, n, t, rho, theta, W2, lambda) {
+    .Call(`_netpanel_pnam_ll_random_error_find`, Y, X, W, n, t, rho, theta, W2, lambda)
 }
 
-pnam_ll_dynam_wae_search <- function(Y, X, W, L, B, n, t, rho, delta, phi, lambda) {
-    .Call(`_netpanel_pnam_ll_dynam_wae_search`, Y, X, W, L, B, n, t, rho, delta, phi, lambda)
-}
-
-pnam_ll_dynam_wae <- function(netA, netB, sigma2, e, n, t) {
-    .Call(`_netpanel_pnam_ll_dynam_wae`, netA, netB, sigma2, e, n, t)
+pnam_ll_random_error <- function(netA, sigma2, v, omega, n, t) {
+    .Call(`_netpanel_pnam_ll_random_error`, netA, sigma2, v, omega, n, t)
 }
 
