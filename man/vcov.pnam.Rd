@@ -2,7 +2,7 @@
 % Please edit documentation in R/pnam_wrapper_functions.R
 \name{vcov.pnam}
 \alias{vcov.pnam}
-\title{Extract variance-covariance matrix from `pnam` Fits}
+\title{Extract variance-covariance matrix from \code{pnam} Fits}
 \usage{
 \method{vcov}{pnam}(object, ...)
 }
@@ -13,8 +13,8 @@
 }
 \description{
 This function extracts the variance-covariance matrix from estimated
-`pnam` model fits for the exogenous covariates. For the endogenous 
-variance matrices (such as that for rho), please extract those 
+\code{pnam} model fits for the exogenous covariates. For the endogenous
+variance matrices (such as that for rho), please extract those
 from the model fit. For example, the variance matrix for rho
-can be extracted as `model$vcov.rho`.
+can be extracted as \code{model$vcov.rho}.
 }

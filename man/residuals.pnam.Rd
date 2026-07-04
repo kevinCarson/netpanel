@@ -2,7 +2,7 @@
 % Please edit documentation in R/pnam_wrapper_functions.R
 \name{residuals.pnam}
 \alias{residuals.pnam}
-\title{Residuals for `pnam` model fits}
+\title{Residuals for \code{pnam} model fits}
 \usage{
 \method{residuals}{pnam}(object, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{Additional arguments for other methods.}
 }
 \description{
-This function returns the model residuals for a `pnam` model fit.
+This function returns the model residuals for a \code{pnam} model fit.
 }

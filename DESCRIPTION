@@ -6,7 +6,13 @@ Date: 2026-04-16
 Authors@R: person("Kevin", "Carson", role = c("aut",
      "cre"), email = "kacarson@arizona.edu")
 Description: This package contains estimation routines for panel network autocorrelation models fit by maximum likelihood estimation. 
-License: GPL (>= 2)
-Imports: Rcpp (>= 1.1.0)
-LinkingTo: Rcpp, RcppArmadillo
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Imports: 
+    Rcpp (>= 1.1.0),
+    stats,
+    RcppArmadillo,
+    Matrix
+LinkingTo: Rcpp, RcppArmadillo

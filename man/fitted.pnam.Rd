@@ -2,7 +2,7 @@
 % Please edit documentation in R/pnam_wrapper_functions.R
 \name{fitted.pnam}
 \alias{fitted.pnam}
-\title{Fitted values from `pnam` model fits}
+\title{Fitted values from \code{pnam} model fits}
 \usage{
 \method{fitted}{pnam}(object, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{Additional arguments for other methods.}
 }
 \description{
-This function returns the model fitted values for a `pnam` model fit.
+This function returns the model fitted values for a \code{pnam} model fit.
 }

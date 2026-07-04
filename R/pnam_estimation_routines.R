@@ -1,37 +1,32 @@
 #
 #
-#     the R functions to estimate the panel network autocorrelation models that
-#     completes the scoring iterations following Millo, where the GLS 
-#     steps occur within the search for the network lag and error parameters
+#     Internal fitting functions for the pnam R package to fit panel network 
+#     autocorrelation model. Internally, the models follow the work of 
+#     Millo and Piras (2012). splm: Spatial Panel data models in R. Journal of Statistical Software
+#     where first, the rho, lambda, and theta values are found by numerical optimization
+#     with optim(), then the values for beta and sigma2 are estimated via GLS. 
 #
-#
-#     last updated on 06-26-2026 (0.0.1)
-#
+#     last updated on 07-02-2026 (pnam version: 0.0.1)
 #
 #
 
-#' @title A Function To Find the ML Estimates for a Panel Network Autocorrelation Model with Unit-Level Random Effects
-#' @name  panelnam.random
-#' @param X the co variate NT x K matrix.
-#' @param Y The NT x 1 vector of outcomes.
-#' @param W A list of J block-diagonal NT x NT matrix
-#' @param n the number of units
-#' @param t the number of time points
-#' @param optim.control The list of user-provided optim control parameters
-#' @param optim.method The user-provided optim search method
+#' @param X the NT x K covariate matrix. (supplied by pnam())
+#' @param Y The NT x 1 vector of outcomes. (supplied by pnam())
+#' @param W A list of J block-diagonal NT x NT matrix (supplied by pnam())
+#' @param n the number of units (supplied by pnam())
+#' @param t the number of time points (supplied by pnam())
+#' @param optim.control The list of user-provided optim control parameters (supplied by pnam())
+#' @param optim.method The user-provided optim search method (supplied by pnam())
 #' @import Rcpp
 #' @import RcppArmadillo
-#' @return A list that store the maximum likelihood pnam estimates. 
-#' @export
-#' @keywords internal
+#' @noRd
 panelnam.random <- function(X,  #the model formula
                             Y,   #the dataset should be stacked as repeated cross-sections (sorted by time)
                             W,        #this should be a list of k NT x NT block-diagonal network matrices
                             n,       #a vector that indexes the unit (respondents)
                             t,  #a vector that indexes the time (respondents)
                             optim.control, #the list of optim control options
-                            optim.method
-                            ){    
+                            optim.method){    
   
   nt <- n*t #the total number of panel data points NT
   k <- length(W) + 1 #the number of searching parameters (length of the rho vector,theta) 
@@ -81,10 +76,10 @@ panelnam.random <- function(X,  #the model formula
   fitted <- solve(net.film,X%*%beta.est) #the fitted values for Y: Y = A^(-1)(XB)
   beta.est <- as.vector(beta.est)
   names(beta.est) <- colnames(X)
-  k <- length(rho) + length(beta) + 2 #plus 2 for theta and sigma2
+  k <- length(rho) + length(beta.est) + 2 #plus 2 for theta and sigma2
   df<-nt-k
   AIC <- 2*k - 2*ll.est
-  BIC <- -2*ll.est + k*ln(nt)
+  BIC <- -2*ll.est + k*log(nt)
   results <- list(rho = rho,
                   vcov.rho = rho.vcov,
                   theta = theta,
@@ -110,22 +105,17 @@ panelnam.random <- function(X,  #the model formula
 }
 
 
-#' @title A Function To Find the ML Estimates for a Dynamic Panel Network Autocorrelation Model 
-#' @description
-#' The dynamic panel network autocorrelation model conditions on the first observations (see Hays et al. 2010). 
-#' @name  panelnam.dynam
-#' @param X the co variate NT x K matrix.
-#' @param Y The NT x 1 vector of outcomes.
-#' @param W A list of J block-diagonal NT x NT matrix
-#' @param n the number of units
-#' @param t the number of time points
+#' @param X the NT x K covariate matrix. (supplied by pnam())
+#' @param Y The NT x 1 vector of outcomes. (supplied by pnam())
+#' @param W A list of J block-diagonal NT x NT matrix (supplied by pnam())
+#' @param n the number of units (supplied by pnam())
+#' @param t the number of time points (supplied by pnam())
 #' @param optim.control The list of user-provided optim control parameters
 #' @param optim.method The user-provided optim search method
+#' @param dyanmic.lag The type of dynamic lag structure (supplied by pnam())
 #' @import Rcpp
 #' @import RcppArmadillo
-#' @return A list that store the maximum likelihood pnam estimates. 
-#' @export
-#' @keywords internal
+#' @noRd
 panelnam.dynam <- function(X,  #the model formula
                            Y,   #the dataset should be stacked as repeated cross-sections (sorted by time)
                            W,   #this should be a list of T network N x N matrices
@@ -204,10 +194,10 @@ panelnam.dynam <- function(X,  #the model formula
   beta.est <- as.vector(beta.est)
   names(beta.est) <- colnames(X)
   fitted <- solve(net.film,X%*%beta.est) #the fitted values for Y: Y = A^(-1)(XB)
-  k <- length(rho) + length(beta) + 1 #plus 2 for sigma2
+  k <- length(rho) + length(beta.est) + 1 #plus 2 for sigma2
   df<-nt-k
   AIC <- 2*k - 2*ll.est
-  BIC <- -2*ll.est + k*ln(nt)
+  BIC <- -2*ll.est + k*log(nt)
   
   results <- list(rho = rho,
                   vcov.rho = rho.vcov,
@@ -230,24 +220,19 @@ panelnam.dynam <- function(X,  #the model formula
 
 
 
-#' @title A Function To Find the ML Estimates for a Fixed Effects Panel Network Autocorrelation Model 
-#' @name  panelnam.fixed
-#' @param X the co variate NT x K matrix.
-#' @param Y The NT x 1 vector of outcomes.
-#' @param W A list of J block-diagonal NT x NT matrix
-#' @param n the number of units
-#' @param t the number of time points
-#' @param id.index the vector of indices to map the unique units. 
-#' @param time.index the vector of indices to map the time units. 
+#' @param X the NT x K covariate matrix. (supplied by pnam())
+#' @param Y The NT x 1 vector of outcomes. (supplied by pnam())
+#' @param W A list of J block-diagonal NT x NT matrix (supplied by pnam())
+#' @param n the number of units (supplied by pnam())
+#' @param t the number of time points (supplied by pnam())
+#' @param id.index the vector of indices to map the unique units. (supplied by pnam())
+#' @param time.index the vector of indices to map the time units. (supplied by pnam())
 #' @param optim.control The list of user-provided optim control parameters
 #' @param optim.method The user-provided optim search method
-#' @param fe the type of demeaning for the fixed effects
+#' @param fe the type of demeaning for the fixed effects (supplied by pnam())
 #' @import Rcpp
 #' @import RcppArmadillo
-#' @return A list that store the maximum likelihood pnam estimates. 
-#' @export
-#' @keywords internal
-#' 
+#' @noRd
 panelnam.fixed <- function(X,  #the model formula
                            Y,   #the dataset should be stacked as repeated cross-sections (sorted by time)
                            W,   #this should be a list of T network N x N matrices
@@ -305,10 +290,10 @@ panelnam.fixed <- function(X,  #the model formula
   fitted <- solve(net.film,X%*%beta.est) #the fitted values for Y: Y = A^(-1)(XB)
   beta.est <- as.vector(beta.est)
   names(beta.est) <- colnames(X)
-  k <- length(rho) + length(beta) + 1 #plus 2 for sigma2
+  k <- length(rho) + length(beta.est) + 1 #plus 2 for sigma2
   df<-nt-k
   AIC <- 2*k - 2*ll.est
-  BIC <- -2*ll.est + k*ln(nt)
+  BIC <- -2*ll.est + k*log(nt)
   
   results <- list(rho = rho,
                   vcov.rho = rho.vcov,
@@ -330,24 +315,20 @@ panelnam.fixed <- function(X,  #the model formula
 }
 
 
-#' @title A Function To Find the ML Estimates for a Fixed Effects Panel Network Autocorrelation Model with Network Error Autocorrelation
-#' @name  panelnam.fixed.error
-#' @param X the co variate NT x K matrix.
-#' @param Y The NT x 1 vector of outcomes.
-#' @param W A list of J block-diagonal NT x NT matrix
-#' @param n the number of units
-#' @param t the number of time points
-#' @param id.index the vector of indices to map the unique units. 
-#' @param time.index the vector of indices to map the time units. 
+#' @param X the NT x K covariate matrix. (supplied by pnam())
+#' @param Y The NT x 1 vector of outcomes. (supplied by pnam())
+#' @param W A list of J block-diagonal NT x NT matrix (supplied by pnam())
+#' @param n the number of units (supplied by pnam())
+#' @param t the number of time points (supplied by pnam())
+#' @param id.index the vector of indices to map the unique units. (supplied by pnam())
+#' @param time.index the vector of indices to map the time units. (supplied by pnam())
 #' @param optim.control The list of user-provided optim control parameters
 #' @param optim.method The user-provided optim search method
-#' @param fe the type of demeaning for the fixed effects
+#' @param fe the type of demeaning for the fixed effects (supplied by pnam())
 #' @param W2 the NT x NT block-diagonal matrix for the error network autocorrelation. 
 #' @import Rcpp
 #' @import RcppArmadillo
-#' @return A list that store the maximum likelihood pnam estimates. 
-#' @export
-#' @keywords internal
+#' @noRd
 panelnam.fixed.error <- function(X,  #the model formula
                            Y,   #the dataset should be stacked as repeated cross-sections (sorted by time)
                            W,   #this should be a list of T network N x N matrices
@@ -413,13 +394,13 @@ panelnam.fixed.error <- function(X,  #the model formula
   fitted <- solve(net.film,X%*%beta.est) #the fitted values for Y: Y = A^(-1)(XB)
   beta.est <- as.vector(beta.est)
   names(beta.est) <- colnames(X)
-  k <- length(rho) + length(beta) + 2 #plus 2 for sigma2 and the lambda
+  k <- length(rho) + length(beta.est) + 2 #plus 2 for sigma2 and the lambda
   df<-nt-k
   AIC <- 2*k - 2*ll.est
-  BIC <- -2*ll.est + k*ln(nt)
+  BIC <- -2*ll.est + k*log(nt)
   
   results <- list(rho = rho,
-                  vcov.rho = rho.vcov,
+                  vcov.rho = vcov.rho,
                   lambda=lambda,
                   vcov.lambda=vcov.lambda,
                   coefficients = beta.est,
@@ -444,24 +425,19 @@ panelnam.fixed.error <- function(X,  #the model formula
 
 
 
-#' @title A Function To Find the ML Estimates for a Dynamic Panel Network Autocorrelation Model with Network Error Autocorrelation
-#' @description
-#' The dynamic panel network autocorrelation model conditions on the first observations (see Hays et al. 2010). 
 #' @name  panelnam.dynam.error
-#' @param X the co variate NT x K matrix.
-#' @param Y The NT x 1 vector of outcomes.
-#' @param W A list of J block-diagonal NT x NT matrix
-#' @param n the number of units
-#' @param t the number of time points
+#' @param X the NT x K covariate matrix. (supplied by pnam())
+#' @param Y The NT x 1 vector of outcomes. (supplied by pnam())
+#' @param W A list of J block-diagonal NT x NT matrix (supplied by pnam())
+#' @param n the number of units (supplied by pnam())
+#' @param t the number of time points (supplied by pnam())
 #' @param optim.control The list of user-provided optim control parameters
 #' @param optim.method The user-provided optim search method
-#' @param dyanmic.lag the type of lags to add to the model. 
-#' @param W2 the NT x NT block-diagonal matrix for the error network autocorrelation. 
+#' @param dyanmic.lag the type of lags to add to the model.  (supplied by pnam())
+#' @param W2 the NT x NT block-diagonal matrix for the error network autocorrelation. (supplied by pnam())
 #' @import Rcpp
 #' @import RcppArmadillo
-#' @return A list that store the maximum likelihood pnam estimates. 
-#' @export
-#' @keywords internal
+#' @noRd
 panelnam.dynam.error <- function(X,  #the model formula
                            Y,   #the dataset should be stacked as repeated cross-sections (sorted by time)
                            W,   #this should be a list of T network N x N matrices
@@ -548,13 +524,13 @@ panelnam.dynam.error <- function(X,  #the model formula
   fitted <- solve(net.film,X%*%beta.est) #the fitted values for Y: Y = A^(-1)(XB)
   beta.est <- as.vector(beta.est)
   names(beta.est) <- colnames(X)
-  k <- length(rho) + length(beta) + 2 #plus 2 for sigma2 and the lambda
+  k <- length(rho) + length(beta.est) + 2 #plus 2 for sigma2 and the lambda
   df<-nt-k
   AIC <- 2*k - 2*ll.est
-  BIC <- -2*ll.est + k*ln(nt)
+  BIC <- -2*ll.est + k*log(nt)
   
   results <- list(rho = rho,
-                  vcov.rho = rho.vcov,
+                  vcov.rho = vcov.rho,
                   lambda=lambda,
                   vcov.lambda=vcov.lambda,
                   coefficients = beta.est,
@@ -572,7 +548,7 @@ panelnam.dynam.error <- function(X,  #the model formula
                   response = Y,
                   covariates = X,
                   optim.information=mle.values)
-  return(model)
+  return(results)
 }
 
 
@@ -581,22 +557,17 @@ panelnam.dynam.error <- function(X,  #the model formula
 
 
 
-#' @title A Function To Find the ML Estimates for a Panel Network Autocorrelation Model with Network Error Autocorrelation and Unit-Level Random Effects
-#' @name  panelnam.random.error
-#' @param X the co variate NT x K matrix.
-#' @param Y The NT x 1 vector of outcomes.
-#' @param W A list of J block-diagonal NT x NT matrix
-#' @param n the number of units
-#' @param t the number of time points
-#' @param optim.control The list of user-provided optim control parameters
-#' @param optim.method The user-provided optim search method
-#' @param dyanmic.lag the type of lags to add to the model. 
+#' @param X the NT x K covariate matrix. (supplied by pnam())
+#' @param Y The NT x 1 vector of outcomes. (supplied by pnam())
+#' @param W A list of J block-diagonal NT x NT matrix (supplied by pnam())
+#' @param n the number of units (supplied by pnam())
+#' @param t the number of time points (supplied by pnam())
+#' @param optim.control The list of user-provided optim control parameters (supplied by pnam())
+#' @param optim.method The user-provided optim search method (supplied by pnam())
 #' @param W2 the NT x NT block-diagonal matrix for the error network autocorrelation. 
 #' @import Rcpp
 #' @import RcppArmadillo
-#' @return A list that store the maximum likelihood pnam estimates. 
-#' @export
-#' @keywords internal
+#' @noRd
 panelnam.random.error <- function(X,  #the model formula
                             Y,   #the dataset should be stacked as repeated cross-sections (sorted by time)
                             W,        #this should be a list of k NT x NT block-diagonal network matrices
@@ -661,13 +632,13 @@ panelnam.random.error <- function(X,  #the model formula
   fitted <- solve(net.film,X%*%beta.est) #the fitted values for Y: Y = A^(-1)(XB)
   beta.est <- as.vector(beta.est)
   names(beta.est) <- colnames(X)
-  k <- length(rho) + length(beta) + 3 #plus 2 for sigma2,lambda, and theta
+  k <- length(rho) + length(beta.est) + 3 #plus 2 for sigma2,lambda, and theta
   df<-nt-k
   AIC <- 2*k - 2*ll.est
-  BIC <- -2*ll.est + k*ln(nt)
+  BIC <- -2*ll.est + k*log(nt)
   
   results <- list(rho = rho,
-                  vcov.rho = rho.vcov,
+                  vcov.rho = vcov.rho,
                   lambda=lambda,
                   theta=theta,
                   vcov.theta=vcov.theta,
