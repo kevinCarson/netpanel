@@ -207,7 +207,8 @@ arma::mat create_B(arma::mat W2,
 // [[Rcpp::export]]
 arma::mat create_LAMBDA(arma::mat B){
   // per the formula: LAMBDA: (Bt)^(-1)^B(-1)
-  arma::mat LAMBDA = B.t().i()*B.i(); 
+  arma::mat Bi = B.i();
+  arma::mat LAMBDA = Bi.t()*Bi; 
   return LAMBDA;
 }
 

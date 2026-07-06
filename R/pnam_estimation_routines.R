@@ -478,6 +478,7 @@ panelnam.dynam.error <- function(X,  #the model formula
   Y <- Y[-(1:n)]
   #also, correcting the W matrix!
   W <- lapply(W,function(net){net[-(1:n),-(1:n)]})
+  W2 <- W2[-(1:n),-(1:n)]
   t <- t - 1 #correcting for the dropping of the first wave
   #luckily, given the structure, the results can be found using the fixed model formulation
   #an r side wrapper here to source to c++

@@ -16,7 +16,6 @@
 #' are included the PNAM becomes an M-STAR model (see XXXX). In addition, the function allows for (1) fixed and
 #' random effects and (2) the inclusion of lagged outcome and network terms. Finally, the function
 #' allows for the time-varying errors to exhibit network autocorrelation, that is, a network lag and error model. 
-#' 
 #' @details
 #' need to write this.......
 #' 
@@ -152,7 +151,6 @@
 #' summary(dyn.pnam)   
 #' 
 #' 
-#' 
 mlpnam <- function(reg.formula,
                  net.formula, 
                  data,
@@ -176,6 +174,7 @@ mlpnam <- function(reg.formula,
   variables <- model.frame(reg.formula, data = data) #the model data frame
   Y <- model.extract(variables, "response")  #the outcome (Y) vector
   X <- model.matrix(reg.formula, data = variables)  #the X matrix
+  if(model=="fixed") X <- X[,!colnames(X) == "(Intercept)"]
   time <- unlist(model.frame(time,data=data))#the time index vector
   t <- length(unique(time)) #the number of panels in the data frame
   unit <- unlist(model.frame(actor,data=data))#the unit index vector
@@ -225,7 +224,7 @@ mlpnam <- function(reg.formula,
                                                            optim.control=optim.control),
                     
                     "dynamic_autocorrelated"=panelnam.dynam.error(X=X,Y=Y,W=W,n=N,t=t,
-                                                            dyanmic.lag=dyanmic.lag,
+                                                            dyanmic.lag=dynamic.lag,
                                                             optim.method=optim.method,
                                                             optim.control=optim.control,W2=errorNet),
                     
@@ -285,12 +284,12 @@ print.pnam  <- function(x,digits=5,...) {
   cat(paste0("Time-Varying Error Structure: ",x$error.structure,"\n"))
   
   if(x$type == "random"){
-    cat("Unit-Specific SD: ", round(x$error.dis$unit,digits), " (variance: ",round(sqrt(x$error.dis$unit),digits), ")\n",sep="")
-    cat("Idiosyncratic SD: ", round(x$error.dis$idiosyncratic,digits), " (variance: ",round(sqrt(x$error.dis$idiosyncratic),digits), ")\n",sep="")
+    cat("Unit-Specific SD: ", round(sqrt(x$error.dis$unit),digits), " (variance: ",round((x$error.dis$unit),digits), ")\n",sep="")
+    cat("Idiosyncratic SD: ", round(sqrt(x$error.dis$idiosyncratic),digits), " (variance: ",round((x$error.dis$idiosyncratic),digits), ")\n",sep="")
     cat("Theta: ", round(x$theta,digits), " (SE: ",round(sqrt((x$vcov.theta)),digits), ")\n",sep="")
   }
   if(x$type != "random"){
-    cat("Idiosyncratic SD: ", round(x$sigma2,digits), "(variance: ",round(sqrt(x$sigma2),digits), ")\n",sep="")
+    cat("Idiosyncratic SD: ", round(sqrt(x$sigma2),digits), " (variance: ",round((x$sigma2),digits), ")\n",sep="")
   }
   if(x$error.structure == "autocorrelated"){
     cat("Network Error Autocorrelation Parameter:\n")
@@ -343,15 +342,14 @@ summary.pnam <- function(object,digits=5,...) {
       `Pr(>|z|)` = round(p,digits)
     )
     rownames(neterror.coef_table) <- "lambda"
-    netlag.coef_table <- rbind(netlag.coef_table,neterror.coef_table)
   }
   
   
   if(object$type=="random"){
     
-    error.comp <-cbind(sd = round(c(object$error.dis$idiosyncratic,
-                                    object$error.dis$unit),digits),
-                       var = round(sqrt(c(object$error.dis$idiosyncratic,
+    error.comp <-cbind(sd = round(sqrt(c(object$error.dis$idiosyncratic,
+                                    object$error.dis$unit)),digits),
+                       var = round((c(object$error.dis$idiosyncratic,
                                      object$error.dis$unit)),digits))
     rownames(error.comp)<- c("idiosyncratic:", "unit-specific:")
     se <- sqrt(object$vcov.theta)
@@ -360,12 +358,12 @@ summary.pnam <- function(object,digits=5,...) {
     theta.se <- round(se,digits)
     theta.est <- round(object$theta,digits)
     theta.p <- round(p,digits)
-    var<-round(sqrt(c(object$error.dis$idiosyncratic,object$error.dis$unit)),digits)
-    icc <- (var[2]/(var[1]+var[2]))
+    var<-round((c(object$error.dis$idiosyncratic,object$error.dis$unit)),digits)
+    icc <- round((var[2]/(var[1]+var[2])),digits)
     
   }else{
-    error.comp <-data.frame(sd = round(c(object$sigma2),digits),
-                       var = round(sqrt(c(object$sigma2)),digits))
+    error.comp <-data.frame(sd =  round(sqrt(c(object$sigma2)),digits),
+                       var = round((c(object$sigma2)),digits))
     rownames(error.comp)<-c("idiosyncratic:")
     theta.se <- NULL
     theta.est <- NULL
@@ -374,9 +372,9 @@ summary.pnam <- function(object,digits=5,...) {
   }
   
   if(object$type=="random") type <- "Maximum Likelihood Panel Network Autocorrelation Model with Unit-Level Random Effects\n"
-  if(object$type=="fixed") type <- paste0("Maximum Likelihood Fixed Effects Panel Network Autocorrelation Model\n Fixed Effect Type: ",
+  if(object$type=="fixed") type <- paste0("Maximum Likelihood Fixed Effects Panel Network Autocorrelation Model\nFixed effect type: ",
                                           object$fe.type,"\n")
-  if(object$type=="dynamic") type <- paste0("Maximum Likelihood Dynamic Panel Network Autocorrelation Model\n FLag Structure: ",
+  if(object$type=="dynamic") type <- paste0("Maximum Likelihood Dynamic Panel Network Autocorrelation Model\nLag structure: ",
                                              object$lag.type,"\n")
 
   
@@ -385,6 +383,7 @@ summary.pnam <- function(object,digits=5,...) {
     call = object$call,
     exo.coef = exogenous.coef_table,
     lag.coef = netlag.coef_table,
+    error.coef =neterror.coef_table,
     logLik = round(object$logLik,digits),
     k=object$k,
     df=object$df,
@@ -395,15 +394,15 @@ summary.pnam <- function(object,digits=5,...) {
     BIC = round(object$BIC,digits),
     type = object$rem.type,
     error.comp=error.comp,
-    theta.se=round(theta.se,digits),
-    theta.p=round(theta.p,digits),
-    theta.est=round(theta.est,digits),
+    theta.se=(theta.se),
+    theta.p=(theta.p),
+    theta.est=(theta.est),
     error.structure=object$error.structure,
     resid = object$residuals,
     sigma2=object$sigma2,
     convergence=object$convergence,
     iterations=object$optim.information$counts[1],
-    icc=round(icc,digits),
+    icc=(icc),
     max.eigen=object$max.eigen
   )
   class(res) <- "summary.pnam"
@@ -427,31 +426,38 @@ print.summary.pnam <- function(x, digits = 5, ...){
   names(res_sum) <- c("Min", "1Q", "Median", "3Q", "Max")
   print(round(res_sum, digits = digits))
   
-  cat("\nPanel Error Variance Components:\n")
+  if(!is.null(x$theta.est)){
+  cat("\nPanel error variance components:\n")
   print(x$error.comp)
   if(!is.null(x$theta.est)) cat("theta: ",x$theta.est," (SE: ",x$theta.se,"; p= ",x$theta.p,")\n",sep = "")
   if(!is.null(x$icc)) cat("icc: ",x$icc,"\n",sep = "")
+  }
   
   if(!is.null(x$theta.coef_table)){
-    cat("\nRandom Effects Theta Estimate:\n")
-    printCoefmat(x$theta.coef_table, P.values = TRUE, has.Pvalue = TRUE)
+    cat("\nRandom effects theta estimate:\n")
+    printCoefmat(x$theta.coef_table, P.values = TRUE, has.Pvalue = TRUE,signif.legend = FALSE)
   }
  
-  cat("\nNetwork Autocorrelation Parameters:\n")
-  printCoefmat(x$lag.coef, P.values = TRUE, has.Pvalue = TRUE)
+  cat("\nNetwork autocorrelation parameters:\n")
+  printCoefmat(x$lag.coef, P.values = TRUE, has.Pvalue = TRUE,signif.legend = FALSE)
   
-  cat("\nML Regression Coefficients:\n")
+  if(!is.null(x$error.coef)){
+  cat("\nNetwork error parameters:\n")
+  printCoefmat(x$error.coef, P.values = TRUE, has.Pvalue = TRUE,signif.legend = FALSE)
+  }
+  
+  cat("\nML regression coefficients:\n")
   printCoefmat(x$exo.coef, P.values = TRUE, has.Pvalue = TRUE)
   
   
-  cat("\nModel Fit Information:\n")
-  cat("Number of Observations: ", x$nt,"; N: ",x$N, "; T: ",x$t ,"\n",sep = "")
-  cat("Parameters Estimated:", x$k,"\n")
-  cat("Log-Likehoood: ", x$logLik," (df=", x$df,"); AIC: ",x$AIC,"; BIC: ", x$BIC,"\n", sep = "")
-  cat("Residual SD: ", round(x$sigma2,digits), "\n",sep = "")
-  cat("Model Convergence: ", ifelse(x$convergence==0,"Yes","No"),"\n", sep = "")
-  cat("Search Iterations: ", x$iterations, "\n",sep = "")
-  cat("Largest eigenvalue of rho*W: ", x$max.eigen, "\n",sep = "")
+  cat("\nModel fit information:\n")
+  cat(" -> number of observations: ", x$nt,"; N: ",x$N, "; T: ",x$t ,"\n",sep = "")
+  cat(" -> parameters estimated:", x$k,"\n")
+  cat(" -> log-likehoood: ", x$logLik," (df=", x$df,"); AIC: ",x$AIC,"; BIC: ", x$BIC,"\n", sep = "")
+  cat(" -> residual SD: ", round(sqrt(x$sigma2),digits), "\n",sep = "")
+  cat(" -> optim convergence: ", ifelse(x$convergence==0,"yes","no"),"\n", sep = "")
+  cat(" -> search iterations: ", x$iterations, "\n",sep = "")
+  cat(" -> largest eigenvalue of rho*W: ", x$max.eigen, "\n",sep = "")
   
 }
 
@@ -536,7 +542,7 @@ fitted.pnam <- function(object,...){
 #' "pnam" fitted object.
 #' 
 #' @param object An object of class "pnam".
-#' @param ... Additional arguments for other methods.
+#' @param digits The number of digits to round the estimates after the decimal point.
 #' @export
 netimpacts <- function(object,digits=6){
   coefs <- (object$coefficients)

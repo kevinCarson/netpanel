@@ -9,7 +9,7 @@ netimpacts(object, digits = 6)
 \arguments{
 \item{object}{An object of class "pnam".}
 
-\item{...}{Additional arguments for other methods.}
+\item{digits}{The number of digits to round the estimates after the decimal point.}
 }
 \description{
 This function returns the estimated network impacts from the

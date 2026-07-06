@@ -148,7 +148,6 @@ dyn.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~  net1 + net2,
 summary(dyn.pnam)   
 
 
-
 }
 \references{
 add to this here....
