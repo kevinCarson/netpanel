@@ -471,6 +471,15 @@ print.summary.pnam <- function(x, digits = 5, ...){
 #' @param object An object of class "pnam".
 #' @param ... Additional arguments for other methods.
 #' @export
+#' @examples
+#' data("network.1", package = "netpanel") 
+#' data("simulated.data", package = "netpanel")
+#' #' a fixed effects panel network autocorrelation model
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "fixed",
+#'                fixed.effect = "actor")
+#' coef(fe.pnam)
 coef.pnam <- function(object,...){
   object$coefficients
 }
@@ -487,6 +496,16 @@ coef.pnam <- function(object,...){
 #' @param object An object of class "pnam".
 #' @param ... Additional arguments for other methods.
 #' @export
+#' @examples
+#' data("network.1", package = "netpanel") 
+#' data("simulated.data", package = "netpanel")
+#' 
+#' # a fixed effects panel network autocorrelation model
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "fixed",
+#'                fixed.effect = "actor")
+#' vcov(fe.pnam)
 vcov.pnam <- function(object,...){
   object$vcov
 }
@@ -501,6 +520,17 @@ vcov.pnam <- function(object,...){
 #' @param REML From the generic `logLik` function. Set to FALSE and does not
 #' need to changed by the user.
 #' @export
+#' @examples
+#' data("network.1", package = "netpanel") #the first panel network
+#' data("simulated.data", package = "netpanel")
+#' 
+#' # a fixed effects panel network autocorrelation model
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "fixed",
+#'                fixed.effect = "actor")
+#' logLik(fe.pnam)
+
 logLik.pnam <- function(object,...,REML = FALSE){
   val <- object$logLik
   attr(val, "df") <- object$k
@@ -516,6 +546,18 @@ logLik.pnam <- function(object,...,REML = FALSE){
 #' @param object An object of class "pnam".
 #' @param ... Additional arguments for other methods.
 #' @export
+#' @examples
+#' data("network.1", package = "netpanel") #the first panel network
+#' data("simulated.data", package = "netpanel")
+#' 
+#' # a fixed effects panel network autocorrelation model
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "fixed",
+#'                fixed.effect = "actor")
+#' residuals(fe.pnam)
+#' 
+#' 
 residuals.pnam <- function(object,...){
   object$residuals
 }
@@ -529,39 +571,70 @@ residuals.pnam <- function(object,...){
 #' @param object An object of class "pnam".
 #' @param ... Additional arguments for other methods.
 #' @export
+#' @examples
+#' data("network.1", package = "netpanel") #the first panel network
+#' data("simulated.data", package = "netpanel")
+#' 
+#' # a fixed effects panel network autocorrelation model
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "fixed",
+#'                fixed.effect = "actor")
+#' fitted(fe.pnam)
+#' 
 fitted.pnam <- function(object,...){
   object$fitted.values
 }
 
 
 
-
-#' The network impacts method (i.e., the matrix of impacts from the estimated model)
-#'
-#' This function returns the estimated network impacts from the
-#' "pnam" fitted object.
-#' 
+#' @title Compute the direct, indirect, and total impacts from a fitted `pnam` object
+#' @name netimpacts
 #' @param object An object of class "pnam".
 #' @param digits The number of digits to round the estimates after the decimal point.
 #' @export
-netimpacts <- function(object,digits=6){
+#' @return A `data.frame` object that stores the direct, indirect, and total impact for each estimated effect in the fitted model
+#' @description
+#' This function returns the estimated average direct, indirect, and total 
+#' impacts from a fitted panel network autocorrelation model. 
+#' @details
+#' In classical linear regression, the marginal effect of a regressor, \eqn{x_1}, on the 
+#' outcome, \eqn{Y}, is \eqn{\hat{\beta_1}}. In network and spatial effects models, the 
+#' marginal effect is:
+#' \deqn{\frac{\partial Y}{\partial x_1} = (I_{N} - \hat{\rho}W)^{-1}\beta_1}
+#' The direct impact is the average of the diagonal value of the above matrix, the
+#' indirect impact is the average of the row sum of the off-diagonal values, and 
+#' the total impact is sum of both. 
+#' 
+#' @examples
+#' data("network.1", package = "netpanel") #the first panel network
+#' data("simulated.data", package = "netpanel")
+#' 
+#' # a fixed effects panel network autocorrelation model
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "fixed",
+#'                fixed.effect = "actor")
+#' netimpacts(fe.pnam)
+#' 
+netimpacts <- function(object,digits=5){
   coefs <- (object$coefficients)
-  vars <- names(coefs)
-  vars <- vars[vars!="(Intercept)"] #dropping the intercept
-  direct<-rep(0,length(vars))
-  indirect<-rep(0,length(vars))
+  coefs <- coefs[names(coefs)!="(Intercept)"] #dropping the intercept
+  direct<-rep(0,length(coefs))
+  indirect<-rep(0,length(coefs))
   Ainv<-solve(object$netfilter)
-  for(i in 1:length(vars)){
+  for(i in 1:length(coefs)){
     impact.matrix <- Ainv*(coefs[i])
     direct[i] <- 1/nrow(Ainv)*sum(diag(impact.matrix))
     diag(impact.matrix)<-0
     indirect[i] <- 1/nrow(Ainv)*sum(impact.matrix)
   }
   total<-direct+indirect
-  res <- data.frame(Effect = vars,
+  res <- data.frame(Regressor = names(coefs),
                     Direct = round(direct,digits),
                     Indirect = round(indirect,digits),
                     Total = round(total,digits))
+  rownames(res) <- NULL
   res
 }
 

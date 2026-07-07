@@ -14,3 +14,15 @@
 \description{
 This function returns the model fitted values for a \code{pnam} model fit.
 }
+\examples{
+data("network.1", package = "netpanel") #the first panel network
+data("simulated.data", package = "netpanel")
+
+# a fixed effects panel network autocorrelation model
+fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+               data =  simulated.data, time = ~panel,
+               actor = ~unit, model = "fixed",
+               fixed.effect = "actor")
+fitted(fe.pnam)
+
+}

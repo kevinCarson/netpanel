@@ -2,16 +2,40 @@
 % Please edit documentation in R/pnam_wrapper_functions.R
 \name{netimpacts}
 \alias{netimpacts}
-\title{The network impacts method (i.e., the matrix of impacts from the estimated model)}
+\title{Compute the direct, indirect, and total impacts from a fitted \code{pnam} object}
 \usage{
-netimpacts(object, digits = 6)
+netimpacts(object, digits = 5)
 }
 \arguments{
 \item{object}{An object of class "pnam".}
 
 \item{digits}{The number of digits to round the estimates after the decimal point.}
 }
+\value{
+A \code{data.frame} object that stores the direct, indirect, and total impact for each estimated effect in the fitted model
+}
 \description{
-This function returns the estimated network impacts from the
-"pnam" fitted object.
+This function returns the estimated average direct, indirect, and total
+impacts from a fitted panel network autocorrelation model.
+}
+\details{
+In classical linear regression, the marginal effect of a regressor, \eqn{x_1}, on the
+outcome, \eqn{Y}, is \eqn{\hat{\beta_1}}. In network and spatial effects models, the
+marginal effect is:
+\deqn{\frac{\partial Y}{\partial x_1} = (I_{N} - \hat{\rho}W)^{-1}\beta_1}
+The direct impact is the average of the diagonal value of the above matrix, the
+indirect impact is the average of the row sum of the off-diagonal values, and
+the total impact is sum of both.
+}
+\examples{
+data("network.1", package = "netpanel") #the first panel network
+data("simulated.data", package = "netpanel")
+
+# a fixed effects panel network autocorrelation model
+fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+               data =  simulated.data, time = ~panel,
+               actor = ~unit, model = "fixed",
+               fixed.effect = "actor")
+netimpacts(fe.pnam)
+
 }

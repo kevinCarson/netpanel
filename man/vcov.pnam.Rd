@@ -18,3 +18,14 @@ variance matrices (such as that for rho), please extract those
 from the model fit. For example, the variance matrix for rho
 can be extracted as \code{model$vcov.rho}.
 }
+\examples{
+data("network.1", package = "netpanel") 
+data("simulated.data", package = "netpanel")
+
+# a fixed effects panel network autocorrelation model
+fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+               data =  simulated.data, time = ~panel,
+               actor = ~unit, model = "fixed",
+               fixed.effect = "actor")
+vcov(fe.pnam)
+}
