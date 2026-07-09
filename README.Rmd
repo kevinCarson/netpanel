@@ -27,9 +27,12 @@ network lags to be fitted simultaneously. Please see the list of below reference
 network autocorrelation model is a linear regression model that takes the following form:
 
 $$Y_t = \lambda_1 W^{t}_{1}Y_t + \cdots + \lambda_k W^{t}_{k}Y_t + X_t\beta + v_t, \ \ t = 1,2,\cdots,T $$
+
 where $Y_t$ is the outcome vector for $N$ actors at time $t$, $\lambda_k W^{t}_{k}Y_t$ is the network autocorrelation term for the $k^{th}$ social network at time $t$, $X_t$ are the set of exogenous time-varying (and invariant) regressors. Moreover, the broad
 definition of the time-varying error term $v_t$ is:
+
 $$v_t = \mu_N + e_t,\ \ t = 1,2,\cdots,T $$
+
 where $\mu_N$ are time-invariant unit-specific unobserved factors thought to explain $Y_t$ and $e_t$ are the time- and unit-varying unobserved factors.
 
 ## Authors

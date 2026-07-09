@@ -22,14 +22,18 @@ generality, a panel network autocorrelation model is a linear regression
 model that takes the following form:
 
 $$Y_t = \lambda_1 W^{t}_{1}Y_t + \cdots + \lambda_k W^{t}_{k}Y_t + X_t\beta + v_t, \ \ t = 1,2,\cdots,T $$
+
 where $Y_t$ is the outcome vector for $N$ actors at time $t$,
 $\lambda_k W^{t}_{k}Y_t$ is the network autocorrelation term for the
 $k^{th}$ social network at time $t$, $X_t$ are the set of exogenous
 time-varying (and invariant) regressors. Moreover, the broad definition
 of the time-varying error term $v_t$ is:
-$$v_t = \mu_N + e_t,\ \ t = 1,2,\cdots,T $$ where $\mu_N$ are
-time-invariant unit-specific unobserved factors thought to explain $Y_t$
-and $e_t$ are the time- and unit-varying unobserved factors.
+
+$$v_t = \mu_N + e_t,\ \ t = 1,2,\cdots,T $$
+
+where $\mu_N$ are time-invariant unit-specific unobserved factors
+thought to explain $Y_t$ and $e_t$ are the time- and unit-varying
+unobserved factors.
 
 ## Authors
 
@@ -102,23 +106,23 @@ summary(re.pnam)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -4.48611 -0.93836 -0.08678  0.89372  4.23751 
+#> -4.48611 -0.93835 -0.08678  0.89373  4.23752 
 #> 
 #> Panel error variance components:
 #>                     sd     var
 #> idiosyncratic: 0.90180 0.81324
-#> unit-specific: 1.06094 1.12559
-#> theta: 1.38409 (SE: 0.31323; p= 1e-05)
+#> unit-specific: 1.06094 1.12560
+#> theta: 1.3841 (SE: 0.31323; p= 1e-05)
 #> icc: 0.58055
 #> 
 #> Network autocorrelation parameters:
 #>      Estimate Std. Error z value  Pr(>|z|)    
-#> net1  0.26437    0.05388  4.9066 < 2.2e-16 ***
-#> net2  0.29328    0.06024  4.8686 < 2.2e-16 ***
+#> net1  0.26437    0.05388  4.9067 < 2.2e-16 ***
+#> net2  0.29327    0.06024  4.8684 < 2.2e-16 ***
 #> 
 #> ML regression coefficients:
 #>             Estimate Std. Error z value  Pr(>|z|)    
-#> (Intercept)  9.93214    0.16010  62.036 < 2.2e-16 ***
+#> (Intercept)  9.93222    0.16010  62.037 < 2.2e-16 ***
 #> x1           0.85819    0.04277  20.068 < 2.2e-16 ***
 #> x2          -1.13678    0.08582 -13.246 < 2.2e-16 ***
 #> x3           1.99977    0.04052  49.356 < 2.2e-16 ***
@@ -131,8 +135,8 @@ summary(re.pnam)
 #>  -> log-likehoood: -901.1132 (df=492); AIC: 1818.226; BIC: 1851.943
 #>  -> residual SD: 0.9018
 #>  -> optim convergence: yes
-#>  -> search iterations: 13
-#>  -> largest eigenvalue of rho*W: 0.557646
+#>  -> search iterations: 15
+#>  -> largest eigenvalue of rho*W: 0.5576419
 ```
 
 ``` r
@@ -142,9 +146,9 @@ impacts <- netimpacts(re.pnam) #extracting the network impacts
 ``` r
 print(impacts) 
 #>   Regressor   Direct Indirect    Total
-#> 1        x1  0.87035  1.06971  1.94006
-#> 2        x2 -1.15288 -1.41696 -2.56984
-#> 3        x3  2.02809  2.49266  4.52075
+#> 1        x1  0.87035  1.06970  1.94004
+#> 2        x2 -1.15288 -1.41694 -2.56982
+#> 3        x3  2.02809  2.49262  4.52071
 ```
 
 We can extend the above model by fitting a mixed network random effects
@@ -171,13 +175,13 @@ summary(re.pnam.mixed)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -4.48412 -0.91269 -0.07685  0.93721  4.18802 
+#> -4.48412 -0.91269 -0.07685  0.93722  4.18802 
 #> 
 #> Panel error variance components:
 #>                     sd     var
 #> idiosyncratic: 0.89532 0.80159
-#> unit-specific: 1.05887 1.12121
-#> theta: 1.39873 (SE: 0.31597; p= 1e-05)
+#> unit-specific: 1.05886 1.12118
+#> theta: 1.3987 (SE: 0.31596; p= 1e-05)
 #> icc: 0.58311
 #> 
 #> Network autocorrelation parameters:
@@ -187,11 +191,11 @@ summary(re.pnam.mixed)
 #> 
 #> Network error parameters:
 #>        Estimate Std. Error z value Pr(>|z|)   
-#> lambda  0.35451    0.13641  2.5989  0.00935 **
+#> lambda  0.35450    0.13641  2.5989  0.00935 **
 #> 
 #> ML regression coefficients:
 #>             Estimate Std. Error z value  Pr(>|z|)    
-#> (Intercept) 10.96108    0.16641  65.868 < 2.2e-16 ***
+#> (Intercept) 10.96107    0.16641  65.869 < 2.2e-16 ***
 #> x1           0.86139    0.04237  20.331 < 2.2e-16 ***
 #> x2          -1.14165    0.08430 -13.543 < 2.2e-16 ***
 #> x3           1.99746    0.04015  49.756 < 2.2e-16 ***
@@ -205,7 +209,7 @@ summary(re.pnam.mixed)
 #>  -> residual SD: 0.89532
 #>  -> optim convergence: yes
 #>  -> search iterations: 17
-#>  -> largest eigenvalue of rho*W: 0.5095087
+#>  -> largest eigenvalue of rho*W: 0.5095095
 ```
 
 ## Questions, Comments, or Suggestions!
