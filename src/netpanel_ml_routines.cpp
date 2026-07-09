@@ -3,23 +3,6 @@
 #include <numbers>
 using namespace arma;
 
-// [[Rcpp::export]]
-arma::mat omega(double theta,
-          double n, 
-          double t){
-  
-  arma::vec l = arma::ones(t); // the vector of ones
-  arma::mat In = eye(n,n); // the standard N x N identity matrix
-  arma::mat It = eye(t,t); // the standard T x T identity matrix
-  arma::mat llt = l * l.t(); // per the formula
-  // the omega matrix per the formula
-  arma::mat omega = theta*(arma::kron(llt,In)) + arma::kron(It,In); 
-  return omega;
-}
-
-
-
-
 
 // [[Rcpp::export]]
 arma::mat netfilter(Rcpp::List W, arma::vec rho){
@@ -76,17 +59,22 @@ double gls_compute_sigma2(arma::vec v,
 }
 
 
+// [[Rcpp::export]]
+arma::mat inv_omega(double theta, double n, double t){
+  arma::vec l = arma::ones(t); // the vector of ones
+  arma::mat llt = l * l.t(); // per the formula
+  arma::mat inner = eye(t,t) - (theta*llt/(1+theta*t));
+  arma::mat invomega = arma::kron(inner,eye(n,n));
+  return invomega;
+}
 
-
-
-
-
-
-
-
-
-
-// the following functions are to be used with random unit level effects
+// [[Rcpp::export]]
+double det_omega(double theta, 
+                 double n, 
+                 double t){
+  double detomega = std::pow(1.0 + t*theta, n);
+  return detomega;
+}
 
 
 // [[Rcpp::export]]
@@ -99,27 +87,17 @@ double pnam_ll_random_find(arma::vec Y,
                       double theta){
  double pi = 2 * acos(0.0); 
  double c = -n*t/2*log(2*pi);
- arma::mat omegaest = omega(theta,n,t);
- 
- double logdet_val;
- double sign;
- arma::log_det(logdet_val, sign, omegaest);
- 
+ double logdetomega = log(det_omega(theta,n,t)); 
+ arma::mat invomega = inv_omega(theta,n,t);
  arma::mat netA = netfilter(W,rho);
- 
  double jacobian;
  double signjacob;
  arma::log_det(jacobian, signjacob, netA);
-
- arma::mat invomega = omegaest.i(); 
- 
  arma::vec beta = gls_compute_beta(netA,invomega,X,Y,true);
  arma::vec v = gls_compute_v(netA, beta,X,Y); 
  double sigma2 = gls_compute_sigma2(v,invomega,true); 
- 
- double ll = arma::as_scalar(c -(n*t/2)*log(sigma2) + (-0.5)*logdet_val + 
+ double ll = arma::as_scalar(c -(n*t/2)*log(sigma2) + (-0.5)*logdetomega + 
                              jacobian - (1/(2*sigma2))*(v.t()*invomega*v));
-   
  return -ll; 
 }
 
@@ -128,34 +106,20 @@ double pnam_ll_random_find(arma::vec Y,
 double pnam_ll_random(arma::mat netA,
                     double sigma2, 
                     arma::vec v,
-                    arma::mat omega,
                     double n,
-                    double t){
+                    double t,
+                    double theta){
 
   double pi = 2 * acos(0.0); 
   double c = -n*t/2*log(2*pi) + -n*t/2*log(2*sigma2);
-  
-  arma::mat invomega = omega.i();
-  
-  double logdet_val;
-  double sign;
-  arma::log_det(logdet_val, sign, omega);
-
+  double logdetomega = log(det_omega(theta,n,t)); 
+  arma::mat invomega = inv_omega(theta,n,t);
   double jacobian;
   double signjacob;
   arma::log_det(jacobian, signjacob, netA);
-  
-  double ll = arma::as_scalar(c + (-0.5)*logdet_val + jacobian - (1/(2*sigma2))*(v.t()*invomega*v));
+  double ll = arma::as_scalar(c + (-0.5)*logdetomega + jacobian - (1/(2*sigma2))*(v.t()*invomega*v));
   return ll;
 }
-
-
-
-
-
-
-
-// the following functions are to be used with fixed effects panel network autocorrelation models
 
 // [[Rcpp::export]]
 double pnam_ll_fixed_find(arma::vec Y,

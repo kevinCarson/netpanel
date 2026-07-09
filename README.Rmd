@@ -1,0 +1,112 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# netpanel: An R Package that Contains Maximum Likelihood Estimation Routines for Panel Network Autocorrelation Models
+
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/kevinCarson/netpanel/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kevinCarson/netpanel/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+The `netpanel` package contains maximum likelihood estimation routines to fit panel network autocorrelation models (PNAMs) with time-varying social adjacency matrices. The 
+package contains functionality for (1) fixed and random effects PNAMs, (2) dynamic PNAMs that include time lags of the outcome and networks, and (3) the estimation of network mixed 
+effects models where, in addition to the lag of the outcome, the time-varying residuals are assumed to exhibit network autocorrelation. Importantly, the package allows for multiple 
+network lags to be fitted simultaneously. Please see the list of below references for more information on panel network (spatial) autocorrelation models. For generality, a panel 
+network autocorrelation model is a linear regression model that takes the following form:
+$$Y_t = \lambda_1 W^{t}_{1}Y_t + \cdots + \lambda_k W^{t}_{k}Y_t + X_t\beta + v_t, \ \ t = 1,2,\cdots,T $$
+$$v_t = \mu_N + e_t,\ \ t = 1,2,\cdots,T $$
+where $Y_t$ is the outcome vector for $N$ actors at time $t$, $\lambda_k W^{t}_{k}Y_t$ is the network autocorrelation term for the $k^{th}$ social network at time $t$, $X_t$ are the set of exogenous time-varying (and invariant) regressors. Lastly, $v_t$ is the time-varying error term that is the sum
+of the time-invariant unit-specific unobserved factors, $\mu_N$, thought to explain $Y_t$ and $e_t$ are the 
+time- and unit-varying unobserved factors.
+
+## Authors
+
+**Kevin A. Carson**  
+  - Author & Maintainer    
+  - PhD Candidate at the [University of Arizona School of Sociology](https://sociology.arizona.edu/)  
+  - Email: kacarson@arizona.edu  
+  - Website: https://kevincarson.github.io/  
+
+## Installation
+
+You can install the developmental version of `netpanel` from [GitHub](https://github.com/) with:
+
+``` r
+remotes::install_github("kevinCarson/netpanel")
+```
+
+## The `netpanel` Package API
+
+The `netpanel` package API primarily works through the wrapper function `mlpnam()`. The `mlpnam()`
+function returns an S3 object of class `pnam` that stores the relevant results of the fitted PNAM. The full set of functions (including user-helper S3 methods) are:
+  - `mlpnam()`: fits a panel network autocorrelation model to an empirical panel network dataset via Maximum Likelihood Estimation.
+  - `netimpacts()`: computes the direct, indirect, and total network impacts for each included regressor from a fitted `pnam` S3 object.
+  - `coef.pnam()`: extracts the vector of ML parameter estimates from a fitted `pnam` S3 object.
+  - `vcov.pnam()`: extracts the asymptotic variance-covariance matrix from a fitted `pnam` S3 object.
+  - `logLik.pnam()`: extracts the estimated log-likelihood from a fitted `pnam` S3 object.
+  - `residuals.pnam()`: extracts the model residuals from a fitted `pnam` S3 object.
+  - `fitted.pnam()`: extracts the linear and network regression fitted values from a fitted `pnam` S3 object.
+
+## Fitting a Random Effects Panel Network Autocorrelation Model with `netpanel`
+
+Importantly, the `netpanel` package includes a set of simulated pseudo data objects for users to start fitting panel network 
+autocorrelation models. Below, we rely upon them to provide a brief example of how the `netpanel` package fits these types of 
+models.
+
+```{r processevents}
+library(netpanel)
+data("net1", package = "netpanel") #the first panel network
+data("net2", package = "netpanel") #the second panel network
+data("net3", package = "netpanel") #the third panel network
+data("simulated.data", package = "netpanel") #the simulated variables 
+
+# a random effects panel network autocorrelation model
+re.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1 + net2,
+               data =  simulated.data, time = ~panel,
+               actor = ~unit, model = "random")
+```
+
+```{r print, echo=TRUE}
+summary(re.pnam) 
+```
+```{r computeimpacts}
+impacts <- netimpacts(re.pnam) #extracting the network impacts
+```
+
+```{r print1, echo=TRUE}
+print(impacts) 
+```
+
+We can extend the above model by fitting a mixed network random effects panel autocorrelation with `netpanel` that 
+allows for the time-varying residuals to be autocorrelated across the network ties.
+
+```{r mixedeffectsmodel}
+# a random effects network mixed effects panel autocorrelation model
+re.pnam.mixed <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1 + net2,
+               data =  simulated.data, time = ~panel,
+               actor = ~unit, model = "random",
+               errors = "autocorrelated",
+               autocorrelated.network = net3)
+```
+
+```{r printmixed, echo=TRUE}
+summary(re.pnam.mixed) 
+```
+
+## Questions, Comments, or Suggestions!
+
+If you have any questions, comments, or suggestions please feel free to open an issue! 
+
+

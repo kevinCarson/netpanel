@@ -59,13 +59,11 @@ panelnam.random <- function(X,  #the model formula
   rho <- mle.values$par[1:(length(mle.values$par)-1)]
   theta <- mle.values$par[length(mle.values$par)]
   net.film <- netfilter(W,rho = rho)
-  omega.est <- omega(theta=theta,n,t)
-  inv.omega.est <- solve(omega.est)
+  inv.omega.est <- inv_omega(theta,n,t)
   beta.est <- gls_compute_beta(net.film,omegainv=inv.omega.est,X=X,Y=Y,random=TRUE)
   vt.est <- gls_compute_v(net.film,beta=beta.est,X=X,Y=Y)
   sigma2.est <- gls_compute_sigma2(vt.est,omegainv=inv.omega.est,random=TRUE)
-  ll.est <- pnam_ll_random(netA = net.film,sigma2 = sigma2.est,
-                         v=vt.est,omega=omega.est,n=n,t=t)
+  ll.est <- pnam_ll_random(netA = net.film,sigma2 = sigma2.est,v=vt.est,n=n,t=t,theta=theta)
   noneta.vcov <- solve(pnamhess)
   rho.vcov <- as.matrix(noneta.vcov[1:length(W),1:length(W)])
   colnames(rho.vcov) <- rownames(rho.vcov) <- names(W)
@@ -136,19 +134,29 @@ panelnam.dynam <- function(X,  #the model formula
   for(i in start:nt){ #for all elements across sub lower diagonal
     L[i, i - n] <- 1 #add a value of 1
   }
-  if(dyanmic.lag == "outcome"){ X <- as.matrix(data.frame(X,lag.y=L%*%Y))}
-  if(dyanmic.lag == "network"){
-    for(i in 1:length(W)){
-      X <- as.matrix(data.frame(X,L%*%W[[i]]%*%Y))
-      colnames(X)[ncol(X)] <- paste0("lag.net.",names(W)[i])
-    }
+  if(dyanmic.lag == "outcome"){ 
+    names.x <- colnames(X)
+    X <- as.matrix(data.frame(X,L%*%Y))
+    colnames(X) <- c(names.x, "lag.y")
   }
-  if(dyanmic.lag == "network x outcome"){
-    X <- as.matrix(data.frame(X,lag.y = L%*%Y))
+  
+  if(dyanmic.lag == "network"){
+    names.x <- colnames(X)
     for(i in 1:length(W)){
       X <- as.matrix(data.frame(X,L%*%W[[i]]%*%Y))
-      colnames(X)[ncol(X)] <- paste0("lag.net.",names(W)[i])
     }
+    colnames(X) <- c(names.x, paste0("lag.net.",names(W)))
+  }
+  
+  if(dyanmic.lag == "network x outcome"){
+    names.x <- colnames(X)
+    X <- as.matrix(data.frame(X,L%*%Y))
+    colnames(X) <- c(names.x, "lag.y")
+    names.x <- colnames(X)
+    for(i in 1:length(W)){
+      X <- as.matrix(data.frame(X,L%*%W[[i]]%*%Y))
+    }
+    colnames(X) <- c(names.x, paste0("lag.net.",names(W)))
   }
   #dropping the first time point for conditional log likelihood estimation
   X <- X[-(1:n),]
@@ -459,19 +467,29 @@ panelnam.dynam.error <- function(X,  #the model formula
   for(i in start:nt){ #for all elements across sub lower diagonal
     L[i, i - n] <- 1 #add a value of 1
   }
-  if(dyanmic.lag == "outcome"){ X <- as.matrix(data.frame(X,lag.y=L%*%Y))}
-  if(dyanmic.lag == "network"){
-    for(i in 1:length(W)){
-      X <- as.matrix(data.frame(X,L%*%W[[i]]%*%Y))
-      colnames(X)[ncol(X)] <- paste0("lag.net.",names(W)[i])
-    }
+  if(dyanmic.lag == "outcome"){ 
+    names.x <- colnames(X)
+    X <- as.matrix(data.frame(X,L%*%Y))
+    colnames(X) <- c(names.x, "lag.y")
   }
-  if(dyanmic.lag == "network x outcome"){
-    X <- as.matrix(data.frame(X,lag.y = L%*%Y))
+  
+  if(dyanmic.lag == "network"){
+    names.x <- colnames(X)
     for(i in 1:length(W)){
       X <- as.matrix(data.frame(X,L%*%W[[i]]%*%Y))
-      colnames(X)[ncol(X)] <- paste0("lag.net.",names(W)[i])
     }
+    colnames(X) <- c(names.x, paste0("lag.net.",names(W)))
+  }
+  
+  if(dyanmic.lag == "network x outcome"){
+    names.x <- colnames(X)
+    X <- as.matrix(data.frame(X,L%*%Y))
+    colnames(X) <- c(names.x, "lag.y")
+    names.x <- colnames(X)
+    for(i in 1:length(W)){
+      X <- as.matrix(data.frame(X,L%*%W[[i]]%*%Y))
+    }
+    colnames(X) <- c(names.x, paste0("lag.net.",names(W)))
   }
   #dropping the first time point for conditional log likelihood estimation
   X <- X[-(1:n),]

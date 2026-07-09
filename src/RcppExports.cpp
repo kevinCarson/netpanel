@@ -11,19 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// omega
-arma::mat omega(double theta, double n, double t);
-RcppExport SEXP _netpanel_omega(SEXP thetaSEXP, SEXP nSEXP, SEXP tSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type n(nSEXP);
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(omega(theta, n, t));
-    return rcpp_result_gen;
-END_RCPP
-}
 // netfilter
 arma::mat netfilter(Rcpp::List W, arma::vec rho);
 RcppExport SEXP _netpanel_netfilter(SEXP WSEXP, SEXP rhoSEXP) {
@@ -78,6 +65,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// inv_omega
+arma::mat inv_omega(double theta, double n, double t);
+RcppExport SEXP _netpanel_inv_omega(SEXP thetaSEXP, SEXP nSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(inv_omega(theta, n, t));
+    return rcpp_result_gen;
+END_RCPP
+}
+// det_omega
+double det_omega(double theta, double n, double t);
+RcppExport SEXP _netpanel_det_omega(SEXP thetaSEXP, SEXP nSEXP, SEXP tSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    rcpp_result_gen = Rcpp::wrap(det_omega(theta, n, t));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pnam_ll_random_find
 double pnam_ll_random_find(arma::vec Y, arma::mat X, Rcpp::List W, double n, double t, arma::vec rho, double theta);
 RcppExport SEXP _netpanel_pnam_ll_random_find(SEXP YSEXP, SEXP XSEXP, SEXP WSEXP, SEXP nSEXP, SEXP tSEXP, SEXP rhoSEXP, SEXP thetaSEXP) {
@@ -96,18 +109,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // pnam_ll_random
-double pnam_ll_random(arma::mat netA, double sigma2, arma::vec v, arma::mat omega, double n, double t);
-RcppExport SEXP _netpanel_pnam_ll_random(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP omegaSEXP, SEXP nSEXP, SEXP tSEXP) {
+double pnam_ll_random(arma::mat netA, double sigma2, arma::vec v, double n, double t, double theta);
+RcppExport SEXP _netpanel_pnam_ll_random(SEXP netASEXP, SEXP sigma2SEXP, SEXP vSEXP, SEXP nSEXP, SEXP tSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type netA(netASEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
     Rcpp::traits::input_parameter< arma::vec >::type v(vSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega(omegaSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type t(tSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnam_ll_random(netA, sigma2, v, omega, n, t));
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    rcpp_result_gen = Rcpp::wrap(pnam_ll_random(netA, sigma2, v, n, t, theta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -292,11 +305,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_netpanel_omega", (DL_FUNC) &_netpanel_omega, 3},
     {"_netpanel_netfilter", (DL_FUNC) &_netpanel_netfilter, 2},
     {"_netpanel_gls_compute_v", (DL_FUNC) &_netpanel_gls_compute_v, 4},
     {"_netpanel_gls_compute_beta", (DL_FUNC) &_netpanel_gls_compute_beta, 5},
     {"_netpanel_gls_compute_sigma2", (DL_FUNC) &_netpanel_gls_compute_sigma2, 3},
+    {"_netpanel_inv_omega", (DL_FUNC) &_netpanel_inv_omega, 3},
+    {"_netpanel_det_omega", (DL_FUNC) &_netpanel_det_omega, 3},
     {"_netpanel_pnam_ll_random_find", (DL_FUNC) &_netpanel_pnam_ll_random_find, 7},
     {"_netpanel_pnam_ll_random", (DL_FUNC) &_netpanel_pnam_ll_random, 6},
     {"_netpanel_pnam_ll_fixed_find", (DL_FUNC) &_netpanel_pnam_ll_fixed_find, 6},
