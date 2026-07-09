@@ -2,19 +2,19 @@ Package: netpanel
 Type: Package
 Title: Maximum Likelihood Estimation Routines for Panel Network Autocorrelation Models
 Version: 0.0.1
-Date: 2026-04-16
 Authors@R: person("Kevin", "Carson", role = c("aut",
      "cre"), email = "kacarson@arizona.edu")
-Description: This package contains maximum likelihood estimation routines for panel network autocorrelation models. The package contains functionality for fixed and random effects panel network autocorrelation model, in addition to dynamic panel network autocorrelation that contains time lags of the response and networks. Moreover, the package allows for multiple networks to be fitted. For information on the types of models estimated in this package, please see Anselin (1988) <doi:10.1007/978-94-015-7799-1>, Cook et al. (2023) <doi:10.1017/S0003055422000272>, Hays et al. (2010) <doi:10.1016/j.stamet.2009.11.005>, Lee and Yu (2012) <doi:10.1111/j.1468-2354.2012.00724.x>, Millo (2014) <doi:10.1016/j.csda.2013.07.024>, Millo and Piras (2012) <doi:10.18637/jss.v047.i01>, and Wang and Yu (2015) <doi:10.1016/j.econlet.2015.01.021>. 
+Description: A set of maximum likelihood estimation routines for panel network autocorrelation models. The package contains functionality for fixed and random effects panel network autocorrelation model, in addition to dynamic panel network autocorrelation that contains time lags of the response and networks. Moreover, the package allows for multiple networks to be fitted. For information on the types of models estimated in this package, please see Anselin (1988) <doi:10.1007/978-94-015-7799-1>, Cook et al. (2023) <doi:10.1017/S0003055422000272>, Hays et al. (2010) <doi:10.1016/j.stamet.2009.11.005>, Lee and Yu (2012) <doi:10.1111/j.1468-2354.2012.00724.x>, Millo (2014) <doi:10.1016/j.csda.2013.07.024>, Millo and Piras (2012) <doi:10.18637/jss.v047.i01>, and Wang and Yu (2015) <doi:10.1016/j.econlet.2015.01.021>. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
     Rcpp (>= 1.1.0),
-    stats,
     RcppArmadillo,
+    stats,
     Matrix
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp,
+	   RcppArmadillo
 URL: https://github.com/kevinCarson/netpanel
 BugReports: https://github.com/kevinCarson/netpanel/issues
