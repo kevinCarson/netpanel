@@ -200,13 +200,12 @@
 #'                actor = ~unit, model = "random")
 #' summary(re.pnam)              
 #' 
-#' # a fixed effects panel network autocorrelation model with autocorrelated errors
-#' fe.pnam.error <- mlpnam(Y~x1+x2+x3, net.formula = ~  net1 + net2,
+#' # a fixed effects panel network autocorrelation model 
+#' fe.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~  net1 + net2,
 #'                data =  simulated.data, time = ~panel,
 #'                actor = ~unit, model = "fixed",
-#'                fixed.effect = "actor", errors = "autocorrelated",
-#'                autocorrelated.network = net3)
-#' summary(fe.pnam.error)   
+#'                fixed.effect = "actor")
+#' summary(fe.pnam)   
 #' 
 #' # a dynamic panel network autocorrelation model with autocorrelated errors
 #' dyn.pnam <- mlpnam(Y~x1+x2+x3, net.formula = ~  net1 + net2,
@@ -214,6 +213,17 @@
 #'                actor = ~unit, model = "dynamic",
 #'                dynamic.lag = "outcome")
 #' summary(dyn.pnam)   
+#' 
+#' 
+#' \dontrun{
+#' # a random effects panel network autocorrelation model with autocorrelated errors
+#' re.pnam.error <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#'                data =  simulated.data, time = ~panel,
+#'                actor = ~unit, model = "random",
+#'                errors = "autocorrelated",
+#'                autocorrelated.network = net3)
+#' summary(re.pnam.error)   
+#' }
 #' 
 #' 
 mlpnam <- function(reg.formula,
