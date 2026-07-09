@@ -128,7 +128,7 @@ via Maximum Likelihood Estimation. The estimated model takes the form:
 where \eqn{Y_t} is the outcome vector for \eqn{N} actors at time \eqn{t}, \eqn{\rho_k W^{t}_{k}Y_t} is the
 network autocorrelation term for the \eqn{k^{th}} social network at time \eqn{t} (taken from the \code{net.formula}
 argument), \eqn{X_t} are the set of exogenous time-varying (and invariant) regressors (taken from the \code{reg.formula}
-argument). Additionally, \eqn{v_t} is the time-varying erorr term that is the sum
+argument). Additionally, \eqn{v_t} is the time-varying error term that is the sum
 of the time-invariant unit-specific unobserved factors, \eqn{\mu_N}, thought to explain \eqn{Y_t} and \eqn{e_t} are the
 time- and unit-varying unobserved factors. Dependent upon the \code{model} argument, the function will (1) estimate a fixed-effects
 network regression, where the within estimator demeans the data by time, actor, or both, (2) estimate a random effects

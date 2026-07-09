@@ -25,7 +25,9 @@ package contains functionality for (1) fixed and random effects PNAMs, (2) dynam
 effects models where, in addition to the lag of the outcome, the time-varying residuals are assumed to exhibit network autocorrelation. Importantly, the package allows for multiple 
 network lags to be fitted simultaneously. Please see the list of below references for more information on panel network (spatial) autocorrelation models. For generality, a panel 
 network autocorrelation model is a linear regression model that takes the following form:
+
 $$Y_t = \lambda_1 W^{t}_{1}Y_t + \cdots + \lambda_k W^{t}_{k}Y_t + X_t\beta + v_t, \ \ t = 1,2,\cdots,T $$
+
 $$v_t = \mu_N + e_t,\ \ t = 1,2,\cdots,T $$
 where $Y_t$ is the outcome vector for $N$ actors at time $t$, $\lambda_k W^{t}_{k}Y_t$ is the network autocorrelation term for the $k^{th}$ social network at time $t$, $X_t$ are the set of exogenous time-varying (and invariant) regressors. Lastly, $v_t$ is the time-varying error term that is the sum
 of the time-invariant unit-specific unobserved factors, $\mu_N$, thought to explain $Y_t$ and $e_t$ are the 
@@ -51,6 +53,7 @@ remotes::install_github("kevinCarson/netpanel")
 
 The `netpanel` package API primarily works through the wrapper function `mlpnam()`. The `mlpnam()`
 function returns an S3 object of class `pnam` that stores the relevant results of the fitted PNAM. The full set of functions (including user-helper S3 methods) are:
+
   - `mlpnam()`: fits a panel network autocorrelation model to an empirical panel network dataset via Maximum Likelihood Estimation.
   - `netimpacts()`: computes the direct, indirect, and total network impacts for each included regressor from a fitted `pnam` S3 object.
   - `coef.pnam()`: extracts the vector of ML parameter estimates from a fitted `pnam` S3 object.

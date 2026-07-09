@@ -20,7 +20,9 @@ simultaneously. Please see the list of below references for more
 information on panel network (spatial) autocorrelation models. For
 generality, a panel network autocorrelation model is a linear regression
 model that takes the following form:
+
 $$Y_t = \lambda_1 W^{t}_{1}Y_t + \cdots + \lambda_k W^{t}_{k}Y_t + X_t\beta + v_t, \ \ t = 1,2,\cdots,T $$
+
 $$v_t = \mu_N + e_t,\ \ t = 1,2,\cdots,T $$ where $Y_t$ is the outcome
 vector for $N$ actors at time $t$, $\lambda_k W^{t}_{k}Y_t$ is the
 network autocorrelation term for the $k^{th}$ social network at time
@@ -53,18 +55,22 @@ remotes::install_github("kevinCarson/netpanel")
 The `netpanel` package API primarily works through the wrapper function
 `mlpnam()`. The `mlpnam()` function returns an S3 object of class `pnam`
 that stores the relevant results of the fitted PNAM. The full set of
-functions (including user-helper S3 methods) are: - `mlpnam()`: fits a
-panel network autocorrelation model to an empirical panel network
-dataset via Maximum Likelihood Estimation. - `netimpacts()`: computes
-the direct, indirect, and total network impacts for each included
-regressor from a fitted `pnam` S3 object. - `coef.pnam()`: extracts the
-vector of ML parameter estimates from a fitted `pnam` S3 object. -
-`vcov.pnam()`: extracts the asymptotic variance-covariance matrix from a
-fitted `pnam` S3 object. - `logLik.pnam()`: extracts the estimated
-log-likelihood from a fitted `pnam` S3 object. - `residuals.pnam()`:
-extracts the model residuals from a fitted `pnam` S3 object. -
-`fitted.pnam()`: extracts the linear and network regression fitted
-values from a fitted `pnam` S3 object.
+functions (including user-helper S3 methods) are:
+
+- `mlpnam()`: fits a panel network autocorrelation model to an empirical
+  panel network dataset via Maximum Likelihood Estimation.
+- `netimpacts()`: computes the direct, indirect, and total network
+  impacts for each included regressor from a fitted `pnam` S3 object.
+- `coef.pnam()`: extracts the vector of ML parameter estimates from a
+  fitted `pnam` S3 object.
+- `vcov.pnam()`: extracts the asymptotic variance-covariance matrix from
+  a fitted `pnam` S3 object.
+- `logLik.pnam()`: extracts the estimated log-likelihood from a fitted
+  `pnam` S3 object.
+- `residuals.pnam()`: extracts the model residuals from a fitted `pnam`
+  S3 object.
+- `fitted.pnam()`: extracts the linear and network regression fitted
+  values from a fitted `pnam` S3 object.
 
 ## Fitting a Random Effects Panel Network Autocorrelation Model with `netpanel`
 
@@ -97,7 +103,7 @@ summary(re.pnam)
 #> 
 #> Residuals:
 #>      Min       1Q   Median       3Q      Max 
-#> -4.48611 -0.93836 -0.08678  0.89372  4.23752 
+#> -4.48610 -0.93834 -0.08678  0.89374  4.23753 
 #> 
 #> Panel error variance components:
 #>                     sd     var
@@ -108,12 +114,12 @@ summary(re.pnam)
 #> 
 #> Network autocorrelation parameters:
 #>      Estimate Std. Error z value  Pr(>|z|)    
-#> net1  0.26437    0.05388  4.9066 < 2.2e-16 ***
-#> net2  0.29328    0.06024  4.8686 < 2.2e-16 ***
+#> net1  0.26438    0.05388  4.9068 < 2.2e-16 ***
+#> net2  0.29326    0.06024  4.8683 < 2.2e-16 ***
 #> 
 #> ML regression coefficients:
 #>             Estimate Std. Error z value  Pr(>|z|)    
-#> (Intercept)  9.93212    0.16010  62.036 < 2.2e-16 ***
+#> (Intercept)  9.93230    0.16010  62.037 < 2.2e-16 ***
 #> x1           0.85819    0.04277  20.068 < 2.2e-16 ***
 #> x2          -1.13678    0.08582 -13.246 < 2.2e-16 ***
 #> x3           1.99977    0.04052  49.356 < 2.2e-16 ***
@@ -126,8 +132,8 @@ summary(re.pnam)
 #>  -> log-likehoood: -901.1132 (df=492); AIC: 1818.226; BIC: 1851.943
 #>  -> residual SD: 0.9018
 #>  -> optim convergence: yes
-#>  -> search iterations: 13
-#>  -> largest eigenvalue of rho*W: 0.5576467
+#>  -> search iterations: 14
+#>  -> largest eigenvalue of rho*W: 0.5576381
 ```
 
 ``` r
@@ -137,9 +143,9 @@ impacts <- netimpacts(re.pnam) #extracting the network impacts
 ``` r
 print(impacts) 
 #>   Regressor   Direct Indirect    Total
-#> 1        x1  0.87035  1.06972  1.94006
-#> 2        x2 -1.15288 -1.41697 -2.56985
-#> 3        x3  2.02809  2.49266  4.52075
+#> 1        x1  0.87035  1.06968  1.94003
+#> 2        x2 -1.15288 -1.41692 -2.56979
+#> 3        x3  2.02809  2.49258  4.52067
 ```
 
 We can extend the above model by fitting a mixed network random effects
@@ -171,8 +177,8 @@ summary(re.pnam.mixed)
 #> Panel error variance components:
 #>                     sd     var
 #> idiosyncratic: 0.89532 0.80159
-#> unit-specific: 1.05886 1.12119
-#> theta: 1.39871 (SE: 0.31596; p= 1e-05)
+#> unit-specific: 1.05887 1.12120
+#> theta: 1.39872 (SE: 0.31597; p= 1e-05)
 #> icc: 0.58311
 #> 
 #> Network autocorrelation parameters:
@@ -186,7 +192,7 @@ summary(re.pnam.mixed)
 #> 
 #> ML regression coefficients:
 #>             Estimate Std. Error z value  Pr(>|z|)    
-#> (Intercept) 10.96107    0.16641  65.869 < 2.2e-16 ***
+#> (Intercept) 10.96109    0.16641  65.869 < 2.2e-16 ***
 #> x1           0.86139    0.04237  20.331 < 2.2e-16 ***
 #> x2          -1.14165    0.08430 -13.543 < 2.2e-16 ***
 #> x3           1.99746    0.04015  49.756 < 2.2e-16 ***
@@ -200,7 +206,7 @@ summary(re.pnam.mixed)
 #>  -> residual SD: 0.89532
 #>  -> optim convergence: yes
 #>  -> search iterations: 17
-#>  -> largest eigenvalue of rho*W: 0.5095092
+#>  -> largest eigenvalue of rho*W: 0.5095084
 ```
 
 ## Questions, Comments, or Suggestions!
