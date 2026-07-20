@@ -215,14 +215,14 @@
 #' summary(dyn.pnam)   
 #' 
 #' 
-#' \dontrun{
-#' # a random effects panel network autocorrelation model with autocorrelated errors
-#' re.pnam.error <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
+#' \donttest{
+#' # a fixed effects panel network autocorrelation model with autocorrelated errors
+#' fe.pnam.error <- mlpnam(Y~x1+x2+x3, net.formula = ~ net1,
 #'                data =  simulated.data, time = ~panel,
-#'                actor = ~unit, model = "random",
+#'                actor = ~unit, model = "fixed",
 #'                errors = "autocorrelated",
 #'                autocorrelated.network = net3)
-#' summary(re.pnam.error)   
+#' summary(fe.pnam.error)   
 #' }
 #' 
 #' 

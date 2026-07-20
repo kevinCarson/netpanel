@@ -1,0 +1,4 @@
+load("/Users/kevincarson/Library/CloudStorage/Dropbox/netpanel/netpanel/data/net1.rda")
+load("/Users/kevincarson/Library/CloudStorage/Dropbox/netpanel/netpanel/data/net2.rda")
+load("/Users/kevincarson/Library/CloudStorage/Dropbox/netpanel/netpanel/data/net3.rda")
+load("/Users/kevincarson/Library/CloudStorage/Dropbox/netpanel/netpanel/data/simulated.data.rda")
